@@ -24,19 +24,22 @@ namespace SSW.MusicStore.API
 	{
 		public Startup(IHostingEnvironment env, IApplicationEnvironment appEnv)
 		{
-			var builder = new ConfigurationBuilder()
-				.SetBasePath(appEnv.ApplicationBasePath)
-				.AddJsonFile("appsettings.json")
-				.AddJsonFile("privatesettings.json")
-				.AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
 
-			if (env.IsDevelopment())
-			{
-				builder.AddUserSecrets();
-			}
+		    var builder = new ConfigurationBuilder()
+		        .SetBasePath(appEnv.ApplicationBasePath);
+
+		    if (env.IsDevelopment())
+		    {
+
+		        builder.AddJsonFile("appsettings.json").AddJsonFile("privatesettings.json");
+		    }
+
+		    builder.AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
+			builder.AddUserSecrets();
 			builder.AddEnvironmentVariables();
 			Configuration = builder.Build();
-		}
+            
+        }
 
 		public IConfigurationRoot Configuration { get; set; }
 
