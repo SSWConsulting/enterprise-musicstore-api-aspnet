@@ -23,11 +23,8 @@ namespace SSW.MusicStore.API.Models
             {
                 var db = serviceScope.ServiceProvider.GetService<MusicStoreContext>();
 
-                if (await db.Database.EnsureCreatedAsync())
-                {
-                    await InsertTestData(serviceProvider);
-                    
-                }
+                await InsertTestData(serviceProvider);  
+                
             }
         }
 
