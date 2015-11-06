@@ -62,12 +62,13 @@ namespace SSW.MusicStore.API
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
-
             if (env.IsDevelopment())
             {
-                //TODO allow certain ports so test pass on a build server
                 app.UseCors(policy => policy
-                    .AllowAnyOrigin());
+                    .AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .AllowCredentials());
             }
             else
             {
@@ -77,7 +78,7 @@ namespace SSW.MusicStore.API
                             .AllowAnyHeader()
                             .AllowCredentials());
             }
-
+                        
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -108,7 +109,8 @@ namespace SSW.MusicStore.API
                 };
             });
 
-            SampleData.InitializeMusicStoreDatabaseAsync(app.ApplicationServices).Wait();
+            //Slows web api - only do this on first run to popular db
+            //SampleData.InitializeMusicStoreDatabaseAsync(app.ApplicationServices).Wait();
 
         }
     }
