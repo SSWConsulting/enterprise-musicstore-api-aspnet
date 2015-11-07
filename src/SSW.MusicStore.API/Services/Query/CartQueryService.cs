@@ -38,7 +38,7 @@ namespace SSW.MusicStore.API.Services.Query
 	            }
 	            else
 	            {
-                    // .Include(c => c.CartItems.Select(ci => ci.Album)) doesnt seem to work
+                    // HACK: .Include(c => c.CartItems.Select(ci => ci.Album)) doesnt seem to work
                     // using a loop
                     foreach (var cartItem in cart.CartItems)
                     {

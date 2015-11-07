@@ -30,17 +30,6 @@ namespace SSW.MusicStore.API.Services.Command
             }
         }
 
-        public async Task SaveCart(string cartId, CancellationToken cancellationToken = new CancellationToken())
-        {
-            Serilog.Log.Logger.Debug($"{nameof(this.EmptyCart)} for cart id '{cartId}'");
-            using (var dbContext = this._dbContextFactory.Create())
-            {
-                var cartItems = await dbContext.CartItems.Where(cart => cart.CartId == cartId).ToArrayAsync(cancellationToken);
-                dbContext.CartItems.RemoveRange(cartItems);
-                await dbContext.SaveChangesAsync(cancellationToken);
-            }
-        }
-
         public async Task<int> CreateOrderFromCart(string cartId, Order order, CancellationToken cancellationToken = new CancellationToken())
         {
             Serilog.Log.Logger.Debug($"{nameof(this.CreateOrderFromCart)} for cart id '{cartId}' and order dated {order.OrderDate.ToShortDateString()}");

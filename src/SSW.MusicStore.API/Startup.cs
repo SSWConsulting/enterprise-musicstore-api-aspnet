@@ -132,7 +132,7 @@ namespace SSW.MusicStore.API
             app.UseMvc();
 
             //Slows web api - only do this on first run to popular db
-            //SampleData.InitializeMusicStoreDatabaseAsync(app.ApplicationServices).Wait();
+            SampleData.InitializeMusicStoreDatabaseAsync(app.ApplicationServices).Wait();
         }
     }
 }
