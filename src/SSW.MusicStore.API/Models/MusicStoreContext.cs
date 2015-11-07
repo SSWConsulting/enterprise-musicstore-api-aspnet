@@ -15,12 +15,17 @@ namespace SSW.MusicStore.API.Models
         public DbSet<Order> Orders { get; set; }
         public DbSet<Genre> Genres { get; set; }
         public DbSet<CartItem> CartItems { get; set; }
+        public DbSet<Cart> Carts { get; set; }
         public DbSet<OrderDetail> OrderDetails { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Entity<CartItem>().HasKey(b => b.CartItemId);
+            builder.Entity<Cart>().HasKey(b => b.CartId);
+
+            builder.Entity<CartItem>().Property(g => g.CartId).HasMaxLength(500);
+            builder.Entity<Cart>().Property(g => g.CartId).HasMaxLength(500);
 
             // TODO: Remove when explicit values insertion removed.
             builder.Entity<Artist>().Property(a => a.ArtistId).ValueGeneratedNever();

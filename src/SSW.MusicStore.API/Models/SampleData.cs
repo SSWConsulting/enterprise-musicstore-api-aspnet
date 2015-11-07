@@ -13,7 +13,7 @@ namespace SSW.MusicStore.API.Models
 {
     public static class SampleData
     {
-        const string imgUrl = "~/Images/placeholder.png";
+        const string imgUrl = "images/placeholder.png";
         const string defaultAdminUserName = "DefaultAdminUserName";
         const string defaultAdminPassword = "defaultAdminPassword";
 
@@ -23,8 +23,10 @@ namespace SSW.MusicStore.API.Models
             {
                 var db = serviceScope.ServiceProvider.GetService<MusicStoreContext>();
 
-                await InsertTestData(serviceProvider);  
-                
+                if (await db.Database.EnsureCreatedAsync())
+                {
+                    await InsertTestData(serviceProvider);
+                }
             }
         }
 

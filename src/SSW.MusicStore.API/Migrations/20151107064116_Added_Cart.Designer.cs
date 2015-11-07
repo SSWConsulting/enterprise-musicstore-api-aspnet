@@ -8,9 +8,10 @@ using SSW.MusicStore.API.Models;
 namespace SSW.MusicStore.API.Migrations
 {
     [DbContext(typeof(MusicStoreContext))]
-    partial class MusicStoreContextModelSnapshot : ModelSnapshot
+    [Migration("20151107064116_Added_Cart")]
+    partial class Added_Cart
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .Annotation("ProductVersion", "7.0.0-beta8-15964")

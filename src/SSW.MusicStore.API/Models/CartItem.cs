@@ -16,5 +16,7 @@ namespace SSW.MusicStore.API.Models
         public DateTime DateCreated { get; set; }
 
         public virtual Album Album { get; set; }
+
+        public virtual Cart Cart { get; set; }
     }
 }

@@ -55,8 +55,8 @@ namespace SSW.MusicStore.API.Controllers
                     DbContext.Orders.Add(order);
 
                     //Process the order
-                    var cart = ShoppingCart.GetCart(DbContext, HttpContext);
-                    await cart.CreateOrder(order);
+                    //var cart = ShoppingCart.GetCart(DbContext, HttpContext);
+                    //await cart.CreateOrder(order);
 
                     // Save all changes
                     await DbContext.SaveChangesAsync(requestAborted);

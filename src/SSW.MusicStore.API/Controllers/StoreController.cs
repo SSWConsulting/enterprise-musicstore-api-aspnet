@@ -19,7 +19,7 @@ using ILogger = Microsoft.Framework.Logging.ILogger;
 namespace SSW.MusicStore.API.Controllers
 {
 	//[Authorize]
-	[Route("api/")]
+	[Route("api")]
 	public class StoreController : Controller
 	{
 		private readonly IServiceProvider _serviceProvider;
@@ -105,7 +105,19 @@ namespace SSW.MusicStore.API.Controllers
 			return Json(albums);
 		}
 
-		private async Task<IEnumerable<Album>> GetTopSellingAlbumsAsync(int count)
+        [HttpGet]
+        [Authorize(ActiveAuthenticationSchemes = "Bearer")]
+        [Route("secured/ping")]
+        public object SecuredPing()
+        {
+            return new
+            {
+                message = "Pong. You accessed a protected endpoint.",
+                claims = User.Claims.Select(c => new { c.Type, c.Value })
+            };
+        }
+
+        private async Task<IEnumerable<Album>> GetTopSellingAlbumsAsync(int count)
 		{
 			return await _albumQueryService.GetTopSellingAlbums(count);
 		}

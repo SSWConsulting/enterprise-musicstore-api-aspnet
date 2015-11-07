@@ -15,134 +15,149 @@ using System.Data.Common;
 using System.Net;
 using Serilog;
 
+using SSW.MusicStore.API.Helpers;
+using SSW.MusicStore.API.Services.Command.Interfaces;
+using SSW.MusicStore.API.Services.Query.Interfaces;
+
 namespace SSW.MusicStore.API.Controllers
 {
+    [Route("api")]
     public class ShoppingCartController : Controller
     {
-
 		[FromServices]
 		public MusicStoreContext DbContext { get; set; }
 
 		private readonly IServiceProvider _serviceProvider;
-		private readonly IGenreQueryService _genreQueryService;
 		private readonly IAlbumQueryService _albumQueryService;
-		private readonly Microsoft.Framework.Logging.ILogger _logger;
+        private readonly ICartQueryService _cartQueryService;
+        private readonly ICartCommandService _cartCommandService;
+        private readonly Microsoft.Framework.Logging.ILogger _logger;
 
 		public ShoppingCartController(
 			ILoggerFactory loggerfactory,
 			IServiceProvider serviceProvider,
-			IGenreQueryService genreQueryService,
-			IAlbumQueryService albumQueryService)
+			IAlbumQueryService albumQueryService,
+            ICartQueryService cartQueryService,
+            ICartCommandService cartCommandService)
 		{
 			_serviceProvider = serviceProvider;
-			_genreQueryService = genreQueryService;
 			_albumQueryService = albumQueryService;
-			_logger = loggerfactory.CreateLogger(nameof(StoreController));
+		    _cartQueryService = cartQueryService;
+		    _cartCommandService = cartCommandService;
+		    _logger = loggerfactory.CreateLogger(nameof(StoreController));
 		}
 
-		[Authorize(ActiveAuthenticationSchemes = "Bearer")]
-		[HttpGet("genres")]
-		public async Task<JsonResult> Get()
-		{
-			_logger.LogInformation("Get all genres");
-			try
-			{
-				var results = await _genreQueryService.GetAllGenres();
-				return Json(results ?? null);
-			}
-			catch (DbException ex)
-			{
-				Log.Logger.Error("Failed to get genres", ex);
-				Response.StatusCode = (int)HttpStatusCode.BadRequest;
-				return Json("Error occurred finding Genres" + ex.Message);
-			}
-		}
-		//public async Task<IActionResult> Index()
-  //      {
-  //          var cart = ShoppingCart.GetCart(DbContext, HttpContext);
+        /// <summary>
+        /// Gets the current shopping cart for logged in user.
+        /// </summary>
+        /// <returns>Cart object including shopping cart items and totals</returns>
+        [Authorize(ActiveAuthenticationSchemes = "Bearer")]
+        [HttpGet("cart")]
+        public async Task<IActionResult> GetCurrentCart()
+        {   
+            _logger.LogInformation("GET request for 'api/cart'");
 
-  //          // Set up our ViewModel
-  //          var viewModel = new ShoppingCartViewModel
-  //          {
-  //              CartItems = await cart.GetCartItems(),
-  //              CartTotal = await cart.GetTotal()
-  //          };
+            // Get current cart for the logged in user
+            var viewModel = await GetCart();
 
-  //          // Return the view
-  //          return View(viewModel);
-  //      }
+            // Return the cart json
+            return Json(viewModel);
+        }
 
-  //      //
-  //      // GET: /ShoppingCart/AddToCart/5
+        /// <summary>
+        /// Adds album to cart.
+        /// </summary>
+        /// <param name="id">The identifier.</param>
+        /// <param name="requestAborted">The request aborted.</param>
+        /// <returns>Cart object including shopping cart items and totals</returns>
+        [Authorize(ActiveAuthenticationSchemes = "Bearer")]
+        [HttpPost("cart/{id}")]
+        public async Task<IActionResult> AddToCart(int id, CancellationToken requestAborted)
+        {
+            _logger.LogInformation("POST request for 'api/{albumId}'", id);
 
-  //      public async Task<IActionResult> AddToCart(int id, CancellationToken requestAborted)
-  //      {
-  //          // Retrieve the album from the database
-  //          var addedAlbum = DbContext.Albums
-  //              .Single(album => album.AlbumId == id);
+            // Retrieve the album from the database
+            var addedAlbum = await _albumQueryService.GetAlbumDetails(id);
 
-  //          // Add it to the shopping cart
-  //          var cart = ShoppingCart.GetCart(DbContext, HttpContext);
+            // Add it to the shopping cart
+            await _cartCommandService.AddToCart(GetCartId(), addedAlbum, requestAborted);
 
-  //          cart.AddToCart(addedAlbum);
+            // Return the cart json
+            var viewModel = await GetCart();
+            return Json(viewModel);
+        }
 
-  //          await DbContext.SaveChangesAsync(requestAborted);
+        /// <summary>
+        /// Empties the cart.
+        /// </summary>
+        /// <param name="requestAborted">The request aborted.</param>
+        /// <returns>Cart object including shopping cart items and totals</returns>
+        [Authorize(ActiveAuthenticationSchemes = "Bearer")]
+        [HttpPost("cart/clear")]
+        public async Task<IActionResult> EmptyCart(CancellationToken requestAborted)
+        {
+            _logger.LogInformation("POST request for 'api/clear'");
 
-  //          // Go back to the main store page for more shopping
-  //          return RedirectToAction("Index");
-  //      }
+            // Clear shopping cart
+            await this._cartCommandService.EmptyCart(GetCartId(), requestAborted);
 
-  //      //
-  //      // AJAX: /ShoppingCart/RemoveFromCart/5
-  //      [HttpPost]
-  //      public async Task<IActionResult> RemoveFromCart(int id, CancellationToken requestAborted)
-  //      {
-  //          var cookieToken = string.Empty;
-  //          var formToken = string.Empty;
-  //          StringValues tokenHeaders;
-  //          string[] tokens = null;
+            // Return the cart json
+            var viewModel = await GetCart();
+            return Json(viewModel);
+        }
 
-  //          if (HttpContext.Request.Headers.TryGetValue("RequestVerificationToken", out tokenHeaders))
-  //          {
-  //              tokens = tokenHeaders.First().Split(':');
-  //              if (tokens != null && tokens.Length == 2)
-  //              {
-  //                  cookieToken = tokens[0];
-  //                  formToken = tokens[1];
-  //              }
-  //          }
+        /// <summary>
+        /// Removes specified item from cart.
+        /// </summary>
+        /// <param name="id">The identifier.</param>
+        /// <param name="requestAborted">The request aborted.</param>
+        /// <returns>Cart object including shopping cart items and totals</returns>
+        [Authorize(ActiveAuthenticationSchemes = "Bearer")]
+        [HttpDelete("cart/{id}")]
+        public async Task<IActionResult> RemoveFromCart(int id, CancellationToken requestAborted)
+        {
+            _logger.LogInformation("DELETE request for 'api/{cartItemId}'", id);
 
-  //          Antiforgery.ValidateTokens(HttpContext, new AntiforgeryTokenSet(formToken, cookieToken));
+            // Remove item from the shopping cart
+            await _cartCommandService.RemoveCartItem(id, requestAborted);
 
-  //          // Retrieve the current user's shopping cart
-  //          var cart = ShoppingCart.GetCart(DbContext, HttpContext);
+            // Return the cart json
+            var viewModel = await GetCart();
+            return Json(viewModel);
+        }
 
-  //          // Get the name of the album to display confirmation
-  //          var cartItem = await DbContext.CartItems
-  //              .Where(item => item.CartItemId == id)
-  //              .Include(c => c.Album)
-  //              .SingleOrDefaultAsync();
+        private async Task<ShoppingCartViewModel> GetCart()
+        {
+            var userId = GetCartId();
+            var cart = await this._cartQueryService.GetCart(userId);
 
-  //          // Remove from cart
-  //          int itemCount = cart.RemoveFromCart(id);
+            // Set up our ViewModel
+            var viewModel = new ShoppingCartViewModel
+            {
+                CartItems = cart.CartItems.Select(c => new CartItem
+                {
+                    Album = c.Album,
+                    CartId = c.CartId, 
+                    Count = c.Count,
+                    DateCreated = c.DateCreated,
+                    CartItemId = c.CartItemId
+                }).ToList(),
+                CartTotal = cart.GetTotal()
+            };
+            return viewModel;
+        }
 
-  //          await DbContext.SaveChangesAsync(requestAborted);
+        private string GetCartId()
+        {
+            var userId = this.User.Claims.GetNameIdentifier();
+            if (userId.IsNullOrEmpty())
+            {
+                var message = "Could not find name identifier in user claims";
+                _logger.LogError(message);
+                throw new ApplicationException(message);
+            }
 
-  //          string removed = (itemCount > 0) ? " 1 copy of " : string.Empty;
-
-  //          // Display the confirmation message
-
-  //          var results = new ShoppingCartRemoveViewModel
-  //          {
-  //              Message = removed + cartItem.Album.Title +
-  //                  " has been removed from your shopping cart.",
-  //              CartTotal = await cart.GetTotal(),
-  //              CartCount = await cart.GetCount(),
-  //              ItemCount = itemCount,
-  //              DeleteId = id
-  //          };
-
-  //          return Json(results);
-  //      }
+            return userId;
+        }
     }
 }
