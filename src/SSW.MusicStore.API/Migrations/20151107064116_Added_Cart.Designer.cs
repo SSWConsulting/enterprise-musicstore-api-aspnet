@@ -14,8 +14,8 @@ namespace SSW.MusicStore.API.Migrations
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
-                .Annotation("ProductVersion", "7.0.0-beta8-15964")
-                .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                .HasAnnotation("ProductVersion", "7.0.0-beta8-15964")
+                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
             modelBuilder.Entity("SSW.MusicStore.API.Models.Album", b =>
                 {
@@ -23,7 +23,7 @@ namespace SSW.MusicStore.API.Migrations
                         .ValueGeneratedOnAdd();
 
                     b.Property<string>("AlbumArtUrl")
-                        .Annotation("MaxLength", 1024);
+                        .HasAnnotation("MaxLength", 1024);
 
                     b.Property<int>("ArtistId");
 
@@ -35,7 +35,7 @@ namespace SSW.MusicStore.API.Migrations
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .Annotation("MaxLength", 160);
+                        .HasAnnotation("MaxLength", 160);
 
                     b.HasKey("AlbumId");
                 });
@@ -53,7 +53,7 @@ namespace SSW.MusicStore.API.Migrations
             modelBuilder.Entity("SSW.MusicStore.API.Models.Cart", b =>
                 {
                     b.Property<string>("CartId")
-                        .Annotation("MaxLength", 500);
+                        .HasAnnotation("MaxLength", 500);
 
                     b.HasKey("CartId");
                 });
@@ -67,7 +67,7 @@ namespace SSW.MusicStore.API.Migrations
 
                     b.Property<string>("CartId")
                         .IsRequired()
-                        .Annotation("MaxLength", 500);
+                        .HasAnnotation("MaxLength", 500);
 
                     b.Property<int>("Count");
 
@@ -95,40 +95,40 @@ namespace SSW.MusicStore.API.Migrations
 
                     b.Property<string>("Address")
                         .IsRequired()
-                        .Annotation("MaxLength", 70);
+                        .HasAnnotation("MaxLength", 70);
 
                     b.Property<string>("City")
                         .IsRequired()
-                        .Annotation("MaxLength", 40);
+                        .HasAnnotation("MaxLength", 40);
 
                     b.Property<string>("Country")
                         .IsRequired()
-                        .Annotation("MaxLength", 40);
+                        .HasAnnotation("MaxLength", 40);
 
                     b.Property<string>("Email")
                         .IsRequired();
 
                     b.Property<string>("FirstName")
                         .IsRequired()
-                        .Annotation("MaxLength", 160);
+                        .HasAnnotation("MaxLength", 160);
 
                     b.Property<string>("LastName")
                         .IsRequired()
-                        .Annotation("MaxLength", 160);
+                        .HasAnnotation("MaxLength", 160);
 
                     b.Property<DateTime>("OrderDate");
 
                     b.Property<string>("Phone")
                         .IsRequired()
-                        .Annotation("MaxLength", 24);
+                        .HasAnnotation("MaxLength", 24);
 
                     b.Property<string>("PostalCode")
                         .IsRequired()
-                        .Annotation("MaxLength", 10);
+                        .HasAnnotation("MaxLength", 10);
 
                     b.Property<string>("State")
                         .IsRequired()
-                        .Annotation("MaxLength", 40);
+                        .HasAnnotation("MaxLength", 40);
 
                     b.Property<decimal>("Total");
 
@@ -157,29 +157,29 @@ namespace SSW.MusicStore.API.Migrations
                 {
                     b.HasOne("SSW.MusicStore.API.Models.Artist")
                         .WithMany()
-                        .ForeignKey("ArtistId");
+                        .HasForeignKey("ArtistId");
 
                     b.HasOne("SSW.MusicStore.API.Models.Genre")
                         .WithMany()
-                        .ForeignKey("GenreId");
+                        .HasForeignKey("GenreId");
                 });
 
             modelBuilder.Entity("SSW.MusicStore.API.Models.CartItem", b =>
                 {
                     b.HasOne("SSW.MusicStore.API.Models.Album")
                         .WithMany()
-                        .ForeignKey("AlbumId");
+                        .HasForeignKey("AlbumId");
 
                     b.HasOne("SSW.MusicStore.API.Models.Cart")
                         .WithMany()
-                        .ForeignKey("CartId");
+                        .HasForeignKey("CartId");
                 });
 
             modelBuilder.Entity("SSW.MusicStore.API.Models.OrderDetail", b =>
                 {
                     b.HasOne("SSW.MusicStore.API.Models.Order")
                         .WithMany()
-                        .ForeignKey("OrderId");
+                        .HasForeignKey("OrderId");
                 });
         }
     }

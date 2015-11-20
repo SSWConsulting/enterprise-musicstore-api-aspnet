@@ -3,18 +3,18 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Mvc;
-using Microsoft.Framework.Caching.Memory;
+using Microsoft.Extensions.Caching.Memory;
 using SSW.MusicStore.API.Models;
 using Microsoft.Data.Entity;
 using System.Linq;
 using System.Net;
 using Microsoft.AspNet.Authorization;
-using Microsoft.Framework.Logging;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Serilog;
 using SSW.MusicStore.API.Services.Query;
 using SSW.MusicStore.API.ViewModels;
-using ILogger = Microsoft.Framework.Logging.ILogger;
+using ILogger = Microsoft.Extensions.Logging.ILogger;
 
 namespace SSW.MusicStore.API.Controllers
 {

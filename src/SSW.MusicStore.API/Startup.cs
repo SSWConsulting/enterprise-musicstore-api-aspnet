@@ -4,9 +4,9 @@ using Microsoft.AspNet.Diagnostics.Entity;
 using Microsoft.AspNet.Hosting;
 using Microsoft.Data.Entity;
 using Microsoft.Dnx.Runtime;
-using Microsoft.Framework.Configuration;
-using Microsoft.Framework.DependencyInjection;
-using Microsoft.Framework.Logging;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Serialization;
 using Serilog;
 using SSW.MusicStore.API.Models;
@@ -19,6 +19,7 @@ using SerilogWeb.Classic.Enrichers;
 using SSW.MusicStore.API.Services.Command;
 using SSW.MusicStore.API.Services.Command.Interfaces;
 using SSW.MusicStore.API.Services.Query.Interfaces;
+using Microsoft.Extensions.PlatformAbstractions;
 
 namespace SSW.MusicStore.API
 {
@@ -103,7 +104,7 @@ namespace SSW.MusicStore.API
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseDatabaseErrorPage(DatabaseErrorPageOptions.ShowAll);
+                app.UseDatabaseErrorPage();
             }
             else
             {

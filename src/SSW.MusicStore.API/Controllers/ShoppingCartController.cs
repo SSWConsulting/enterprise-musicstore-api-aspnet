@@ -4,13 +4,13 @@ using System.Threading.Tasks;
 using Microsoft.AspNet.Antiforgery;
 using Microsoft.AspNet.Mvc;
 using Microsoft.Data.Entity;
-using Microsoft.Framework.Primitives;
+using Microsoft.Extensions.Primitives;
 using SSW.MusicStore.API.Models;
 using SSW.MusicStore.API.ViewModels;
 using Microsoft.AspNet.Authorization;
 using SSW.MusicStore.API.Services.Query;
 using System;
-using Microsoft.Framework.Logging;
+using Microsoft.Extensions.Logging;
 using System.Data.Common;
 using System.Net;
 using Serilog;
@@ -31,7 +31,7 @@ namespace SSW.MusicStore.API.Controllers
 		private readonly IAlbumQueryService _albumQueryService;
         private readonly ICartQueryService _cartQueryService;
         private readonly ICartCommandService _cartCommandService;
-        private readonly Microsoft.Framework.Logging.ILogger _logger;
+        private readonly Microsoft.Extensions.Logging.ILogger _logger;
 
 		public ShoppingCartController(
 			ILoggerFactory loggerfactory,

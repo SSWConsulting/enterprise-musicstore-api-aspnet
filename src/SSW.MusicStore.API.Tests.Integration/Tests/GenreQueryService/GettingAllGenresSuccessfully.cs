@@ -1,12 +1,12 @@
-﻿using SSW.MusicStore.API.Models;
-using SSW.MusicStore.API.Services.Query;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using TestStack.BDDfy;
 using FluentAssertions;
-using SSW.MusicStore.Test.Setup;
+using SSW.MusicStore.API.Models;
+using SSW.MusicStore.API.Services.Query;
+using SSW.MusicStore.API.Tests.Integration.Setup;
+using TestStack.BDDfy;
 
-namespace SSW.MusicStore.Test.Tests.GenreQueryService
+namespace SSW.MusicStore.API.Tests.Integration.Tests.GenreQueryService
 {
     public class GettingAllGenresSuccessfully
     {

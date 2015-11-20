@@ -1,17 +1,13 @@
-﻿using FluentAssertions;
-using SSW.MusicStore.API.Models;
-using SSW.MusicStore.API.Services.Query;
-using SSW.MusicStore.API.Services;
-using SSW.MusicStore.Test.Setup;
-using SSW.MusicStore.Test.Tests.GenreQueryService;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Linq;
-using System.Threading.Tasks;
+using FluentAssertions;
+using SSW.MusicStore.API.Models;
+using SSW.MusicStore.API.Services;
+using SSW.MusicStore.API.Tests.Integration.Setup;
 using TestStack.BDDfy;
 using Xunit;
 
-namespace SSW.MusicStore.Test.TestRunners
+namespace SSW.MusicStore.API.Tests.Integration.TestRunners
 {
 	[Story(
 		AsA = "music store user",

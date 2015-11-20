@@ -1,12 +1,9 @@
-﻿using Microsoft.Data.Entity;
-using Microsoft.Framework.DependencyInjection;
+﻿using System;
+using Microsoft.Data.Entity;
+using Microsoft.Extensions.DependencyInjection;
 using SSW.MusicStore.API.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace SSW.MusicStore.Test.Setup
+namespace SSW.MusicStore.API.Tests.Integration.Setup
 {
     public static class ServiceProviderFactory
     {
