@@ -13,7 +13,7 @@ namespace SSW.MusicStore.API.Models
 {
     public static class SampleData
     {
-        const string imgUrl = "images/placeholder.png";
+        const string imgUrl = "/assets/img/placeholder.png";
         const string defaultAdminUserName = "DefaultAdminUserName";
         const string defaultAdminPassword = "defaultAdminPassword";
 
@@ -67,7 +67,7 @@ namespace SSW.MusicStore.API.Models
             }
         }
 
-       
+
 
         private static Album[] GetAlbums(string imgUrl, Dictionary<string, Genre> genres, Dictionary<string, Artist> artists)
         {
