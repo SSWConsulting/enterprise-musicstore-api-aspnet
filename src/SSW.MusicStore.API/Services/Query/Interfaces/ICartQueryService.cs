@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 
 using SSW.MusicStore.API.Models;
+using System.Collections.Generic;
 
 namespace SSW.MusicStore.API.Services.Query.Interfaces
 {
@@ -16,5 +17,8 @@ namespace SSW.MusicStore.API.Services.Query.Interfaces
         /// Shopping cart for the specified user
         /// </returns>
         Task<Cart> GetCart(string userId, CancellationToken cancellationToken = default(CancellationToken));
-    }
+
+		List<Order> GetOrders(string userId, CancellationToken cancellationToken = default(CancellationToken));
+
+	}
 }

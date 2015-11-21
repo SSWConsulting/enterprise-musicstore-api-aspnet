@@ -36,8 +36,10 @@ namespace SSW.MusicStore.API.Services.Command
             using (var dbContext = this._dbContextFactory.Create())
             {
                 decimal orderTotal = 0;
+				dbContext.Orders.Add(order);
 
-                var cartItems =
+
+				var cartItems =
                     await dbContext.CartItems.Where(cart => cart.CartId == cartId).Include(c => c.Album).ToListAsync(cancellationToken);
 
                 // Iterate over the items in the cart, adding the order details for each
@@ -62,14 +64,14 @@ namespace SSW.MusicStore.API.Services.Command
                 // Set the order's total to the orderTotal count
                 order.Total = orderTotal;
 
-                // Empty the shopping cart
-                var cartItemsToClear = await dbContext.CartItems.Where(cart => cart.CartId == cartId).ToArrayAsync(cancellationToken);
+
+				// Empty the shopping cart
+				var cartItemsToClear = await dbContext.CartItems.Where(cart => cart.CartId == cartId).ToArrayAsync(cancellationToken);
                 dbContext.CartItems.RemoveRange(cartItemsToClear);
 
-                // Save all the changes 
+                // Save all the changes
                 await dbContext.SaveChangesAsync(cancellationToken);
 
-                // Return the OrderId as the confirmation number
                 return order.OrderId;
             }
         }

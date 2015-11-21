@@ -1,19 +1,13 @@
 ﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNet.Antiforgery;
 using Microsoft.AspNet.Mvc;
-using Microsoft.Data.Entity;
-using Microsoft.Extensions.Primitives;
 using SSW.MusicStore.API.Models;
 using SSW.MusicStore.API.ViewModels;
 using Microsoft.AspNet.Authorization;
 using SSW.MusicStore.API.Services.Query;
 using System;
 using Microsoft.Extensions.Logging;
-using System.Data.Common;
-using System.Net;
-using Serilog;
 
 using SSW.MusicStore.API.Helpers;
 using SSW.MusicStore.API.Services.Command.Interfaces;
@@ -21,7 +15,7 @@ using SSW.MusicStore.API.Services.Query.Interfaces;
 
 namespace SSW.MusicStore.API.Controllers
 {
-    [Route("api")]
+	[Route("api")]
     public class ShoppingCartController : Controller
     {
 		[FromServices]
@@ -54,7 +48,7 @@ namespace SSW.MusicStore.API.Controllers
         [Authorize(ActiveAuthenticationSchemes = "Bearer")]
         [HttpGet("cart")]
         public async Task<IActionResult> GetCurrentCart()
-        {   
+        {
             _logger.LogInformation("GET request for 'api/cart'");
 
             // Get current cart for the logged in user
@@ -87,12 +81,64 @@ namespace SSW.MusicStore.API.Controllers
             return Json(viewModel);
         }
 
-        /// <summary>
-        /// Empties the cart.
-        /// </summary>
-        /// <param name="requestAborted">The request aborted.</param>
-        /// <returns>Cart object including shopping cart items and totals</returns>
-        [Authorize(ActiveAuthenticationSchemes = "Bearer")]
+
+		/// <summary>
+		/// Gets the current orders for logged in user.
+		/// </summary>
+		/// <returns>Order object </returns>
+		[Authorize(ActiveAuthenticationSchemes = "Bearer")]
+		[HttpGet("order")]
+		public IActionResult GetOrders(CancellationToken requestAborted)
+		{
+			_logger.LogInformation("GET request for 'api/order'");
+
+			// Add it to the order
+			var viewModel =  _cartQueryService.GetOrders(GetCartId(), requestAborted);
+
+			// Return the order json
+			return Json(viewModel);
+		}
+
+		/// <summary>Create order from cart.
+		/// </summary>
+		/// <param name="id">The identifier.</param>
+		/// <param name="requestAborted">The request aborted.</param>
+		/// <returns>Cart object including shopping cart items and totals</returns>
+		[Authorize(ActiveAuthenticationSchemes = "Bearer")]
+		[HttpPost("order")]
+		public async Task<IActionResult> CreateOrderFromCart([FromBody] OrderViewModel order, CancellationToken requestAborted)
+		{
+			_logger.LogInformation("POST request for 'api/order/'");
+
+			var addedOrder = new Order
+			{
+				Address = order.Address,
+				City = order.City,
+				Country = order.Country,
+				Email = order.Email,
+				FirstName = order.FirstName,
+				LastName = order.LastName,
+				OrderDate = DateTime.Today,
+				Phone = order.Phone,
+				PostalCode = order.PostalCode,
+				State = order.State,
+				Username = GetCartId(),
+				Total = 0
+			};
+
+			// Add it to the order
+			var viewModel = await _cartCommandService.CreateOrderFromCart(GetCartId(), addedOrder, requestAborted);
+
+			// Return the order json
+			return Json(viewModel);
+		}
+
+		/// <summary>
+		/// Empties the cart.
+		/// </summary>
+		/// <param name="requestAborted">The request aborted.</param>
+		/// <returns>Cart object including shopping cart items and totals</returns>
+		[Authorize(ActiveAuthenticationSchemes = "Bearer")]
         [HttpPost("cart/clear")]
         public async Task<IActionResult> EmptyCart(CancellationToken requestAborted)
         {
@@ -137,7 +183,7 @@ namespace SSW.MusicStore.API.Controllers
                 CartItems = cart.CartItems.Select(c => new CartItem
                 {
                     Album = c.Album,
-                    CartId = c.CartId, 
+                    CartId = c.CartId,
                     Count = c.Count,
                     DateCreated = c.DateCreated,
                     CartItemId = c.CartItemId
@@ -147,7 +193,7 @@ namespace SSW.MusicStore.API.Controllers
             return viewModel;
         }
 
-        private string GetCartId()
+		private string GetCartId()
         {
             var userId = this.User.Claims.GetNameIdentifier();
             if (userId.IsNullOrEmpty())
