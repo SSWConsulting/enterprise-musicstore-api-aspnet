@@ -7,6 +7,7 @@ using SSW.MusicStore.API.ViewModels;
 using Microsoft.AspNet.Authorization;
 using SSW.MusicStore.API.Services.Query;
 using System;
+
 using Microsoft.Extensions.Logging;
 
 using SSW.MusicStore.API.Helpers;
