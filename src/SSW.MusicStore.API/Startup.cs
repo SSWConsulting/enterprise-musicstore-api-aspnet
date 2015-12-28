@@ -72,9 +72,6 @@ namespace SSW.MusicStore.API
             var config =
                 new LoggerConfiguration()
                     .WriteTo.ColoredConsole()
-#if DEBUG
-                    .WriteTo.RollingFile("C:\\Temp\\log-{Date}.txt")
-#endif
                     .WriteTo.Seq(serverUrl: Configuration["Seq:Url"], apiKey: Configuration["Seq:Key"])
                     .Enrich.WithProperty("ApplicationName", "Music Store")
                     .Enrich.With(new HttpRequestIdEnricher());
