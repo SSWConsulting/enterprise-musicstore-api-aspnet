@@ -38,7 +38,6 @@ namespace SSW.MusicStore.API
             else
             {
                 builder.AddJsonFile("appsettings.json", optional: true);
-                builder.AddJsonFile("privatesettings.json", optional: true);
             }
 
             builder.AddUserSecrets();
@@ -80,18 +79,6 @@ namespace SSW.MusicStore.API
                     .Enrich.WithProperty("ApplicationName", "Music Store")
                     .Enrich.With(new HttpRequestIdEnricher());
             Log.Logger = config.CreateLogger();
-
-            // DEBUGGING ONLY, WILL BE REMOVED SOON
-            try
-            {
-                var test = Configuration["Test:Me"];
-                Log.Logger.Information(test);
-            }
-            catch
-            {
-                
-            }
-            // END
 
             loggerFactory.MinimumLevel = LogLevel.Information;
             loggerFactory.AddSerilog();
