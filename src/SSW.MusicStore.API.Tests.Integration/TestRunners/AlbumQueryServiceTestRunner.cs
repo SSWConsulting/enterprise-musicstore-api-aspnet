@@ -2,10 +2,13 @@
 using System.Linq;
 using FluentAssertions;
 using SSW.MusicStore.API.Models;
-using SSW.MusicStore.API.Services;
 using SSW.MusicStore.API.Tests.Integration.Setup;
+using SSW.MusicStore.Data;
+
 using TestStack.BDDfy;
 using Xunit;
+
+using DbContextFactory = SSW.MusicStore.API.Services.DbContextFactory;
 
 namespace SSW.MusicStore.API.Tests.Integration.TestRunners
 {
@@ -19,7 +22,7 @@ namespace SSW.MusicStore.API.Tests.Integration.TestRunners
 		{
 			var dbContextFactory = DbContextHelper.CreateDbContextFactory();
 
-			var albumQueryService = new API.Services.Query.AlbumQueryService(dbContextFactory);
+			var albumQueryService = new API.Services.Query.AlbumQueryService(dbContextFactory, new DbContextScopeFactory());
 
 			this.PopulateAlbums(dbContextFactory);
 
@@ -34,7 +37,7 @@ namespace SSW.MusicStore.API.Tests.Integration.TestRunners
 		{
 			var dbContextFactory = DbContextHelper.CreateDbContextFactory();
 
-			var albumQueryService = new API.Services.Query.AlbumQueryService(dbContextFactory);
+			var albumQueryService = new API.Services.Query.AlbumQueryService(dbContextFactory, new DbContextScopeFactory());
 
 			this.PopulateAlbums(dbContextFactory);
 			var genres = albumQueryService.GetByGenre("Genre that doesn't exist").Result;
@@ -48,7 +51,7 @@ namespace SSW.MusicStore.API.Tests.Integration.TestRunners
 		{
 			var dbContextFactory = DbContextHelper.CreateDbContextFactory();
 
-			var albumQueryService = new API.Services.Query.AlbumQueryService(null);
+			var albumQueryService = new API.Services.Query.AlbumQueryService(null, new DbContextScopeFactory());
 			Assert.Throws<AggregateException>(() => albumQueryService.GetByGenre("Pop").Result);
 		}
 

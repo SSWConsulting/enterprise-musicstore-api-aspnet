@@ -1,0 +1,16 @@
+﻿{
+  "version": "1.0.0-*",
+  "description": "SSW.MusicStore.Data.Interfaces Class Library",
+  "authors": [ "Igor" ],
+  "tags": [ "" ],
+  "projectUrl": "",
+  "licenseUrl": "",
+  "dependencies": {
+    "EntityFramework.Commands": "7.0.0-rc1-final",
+    "EntityFramework.MicrosoftSqlServer": "7.0.0-rc1-final"
+  },
+
+  "frameworks": {
+    "dnx451": { }
+  }
+}

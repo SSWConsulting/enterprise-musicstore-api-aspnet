@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNet.Authentication.JwtBearer;
+﻿using System;
+using System.Collections.Generic;
+
+using Microsoft.AspNet.Authentication.JwtBearer;
 using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Diagnostics.Entity;
 using Microsoft.AspNet.Hosting;
@@ -13,6 +16,11 @@ using SSW.MusicStore.API.Models;
 using SSW.MusicStore.API.Services;
 using SSW.MusicStore.API.Services.Query;
 using System.Threading.Tasks;
+using System.Linq;
+using System.Linq.Expressions;
+
+using Autofac;
+using Autofac.Extensions.DependencyInjection;
 
 using SerilogWeb.Classic.Enrichers;
 
@@ -20,6 +28,10 @@ using SSW.MusicStore.API.Services.Command;
 using SSW.MusicStore.API.Services.Command.Interfaces;
 using SSW.MusicStore.API.Services.Query.Interfaces;
 using Microsoft.Extensions.PlatformAbstractions;
+
+using SSW.MusicStore.DependencyResolution;
+
+using ServiceDescriptor = Microsoft.Extensions.DependencyInjection.ServiceDescriptor;
 
 namespace SSW.MusicStore.API
 {
@@ -47,7 +59,7 @@ namespace SSW.MusicStore.API
 
         public IConfigurationRoot Configuration { get; set; }
 
-        public void ConfigureServices(IServiceCollection services)
+        public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             services.AddEntityFramework()
                 .AddSqlServer()
@@ -62,12 +74,36 @@ namespace SSW.MusicStore.API
                     opt.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
                 });
 
-            services.AddTransient<IEmailSender, AuthMessageSender>();
-            services.AddTransient<IDbContextFactory<MusicStoreContext>, DbContextFactory>();
-            services.AddTransient<IGenreQueryService, GenreQueryService>();
-            services.AddTransient<IAlbumQueryService, AlbumQueryService>();
-            services.AddTransient<ICartQueryService, CartQueryService>();
-            services.AddTransient<ICartCommandService, CartCommandService>();
+            var builder = new ContainerBuilder();
+
+            builder.RegisterModule(new DataModule(Configuration["Data:DefaultConnection:ConnectionString"]));
+            builder.RegisterType<AuthMessageSender>()
+                .As<IEmailSender>().InstancePerLifetimeScope();
+            builder.RegisterType<DbContextFactory>()
+                .As<IDbContextFactory<MusicStoreContext>>().InstancePerLifetimeScope();
+            builder.RegisterType<GenreQueryService>()
+                .As<IGenreQueryService>().InstancePerLifetimeScope();
+            builder.RegisterType<AlbumQueryService>()
+                .As<IAlbumQueryService>().InstancePerLifetimeScope();
+            builder.RegisterType<CartQueryService>()
+                .As<ICartQueryService>().InstancePerLifetimeScope();
+            builder.RegisterType<CartCommandService>()
+                .As<ICartCommandService>().InstancePerLifetimeScope();
+
+            //Populate the container with services that were previously registered
+            builder.Populate(services);
+
+            var container = builder.Build();
+
+            return container.Resolve<IServiceProvider>();
+
+
+            //services.AddTransient<IEmailSender, AuthMessageSender>();
+            //services.AddTransient<IDbContextFactory<MusicStoreContext>, DbContextFactory>();
+            //services.AddTransient<IGenreQueryService, GenreQueryService>();
+            //services.AddTransient<IAlbumQueryService, AlbumQueryService>();
+            //services.AddTransient<ICartQueryService, CartQueryService>();
+            //services.AddTransient<ICartCommandService, CartCommandService>();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)

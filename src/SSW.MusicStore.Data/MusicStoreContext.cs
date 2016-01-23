@@ -1,25 +1,30 @@
 ﻿using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.Data.Entity;
+using Microsoft.Data.Entity.Infrastructure;
+
 using SSW.MusicStore.Data.Entities;
 
-namespace SSW.MusicStore.Models
+namespace SSW.MusicStore.Data
 {
 
 	public class ApplicationUser : IdentityUser
 	{
 	}
 
-	public class MusicStoreContext : IdentityDbContext<ApplicationUser>
+	public class MusicStoreContext : DbContext
     {
-        public DbSet<Album> Albums { get; set; }
+	    public MusicStoreContext(DbContextOptions options) : base(options)
+	    {
+	    }
+
+	    public DbSet<Album> Albums { get; set; }
         public DbSet<Artist> Artists { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<Genre> Genres { get; set; }
         public DbSet<CartItem> CartItems { get; set; }
         public DbSet<OrderDetail> OrderDetails { get; set; }
 
-
-        protected override void OnModelCreating(ModelBuilder builder)
+	    protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Entity<CartItem>().HasKey(b => b.CartItemId);
 

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{754A3217-208E-4C24-A820-64A58F4D2A09}"
 EndProject
@@ -27,6 +27,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "90 Dependencies", "90 Depen
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "SSW.MusicStore.API.Tests.Integration", "src\SSW.MusicStore.API.Tests.Integration\SSW.MusicStore.API.Tests.Integration.xproj", "{CA663205-77DE-4E55-B300-85594181B5A9}"
 EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "SSW.MusicStore.DependencyResolution", "SSW.MusicStore.DependencyResolution\SSW.MusicStore.DependencyResolution.xproj", "{1306E830-753B-47F8-8052-1AE0ECF11EB2}"
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "SSW.MusicStore.Data.Interfaces", "SSW.MusicStore.Data.Interfaces\SSW.MusicStore.Data.Interfaces.xproj", "{A0DB9265-AA88-4F92-836E-10F1A1214B78}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +49,14 @@ Global
 		{CA663205-77DE-4E55-B300-85594181B5A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CA663205-77DE-4E55-B300-85594181B5A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CA663205-77DE-4E55-B300-85594181B5A9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1306E830-753B-47F8-8052-1AE0ECF11EB2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1306E830-753B-47F8-8052-1AE0ECF11EB2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1306E830-753B-47F8-8052-1AE0ECF11EB2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1306E830-753B-47F8-8052-1AE0ECF11EB2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A0DB9265-AA88-4F92-836E-10F1A1214B78}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A0DB9265-AA88-4F92-836E-10F1A1214B78}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A0DB9265-AA88-4F92-836E-10F1A1214B78}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A0DB9265-AA88-4F92-836E-10F1A1214B78}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -59,5 +71,7 @@ Global
 		{9180A7D0-55A8-4CB8-9E7D-C9190621C97F} = {754A3217-208E-4C24-A820-64A58F4D2A09}
 		{71263E6F-21BF-40F6-8264-F58B0E304A04} = {754A3217-208E-4C24-A820-64A58F4D2A09}
 		{CA663205-77DE-4E55-B300-85594181B5A9} = {C728A4D4-B254-4306-9327-6C7F0E9BE682}
+		{1306E830-753B-47F8-8052-1AE0ECF11EB2} = {9180A7D0-55A8-4CB8-9E7D-C9190621C97F}
+		{A0DB9265-AA88-4F92-836E-10F1A1214B78} = {32F3E361-3C23-4AD9-92C5-C95DEE6F0044}
 	EndGlobalSection
 EndGlobal

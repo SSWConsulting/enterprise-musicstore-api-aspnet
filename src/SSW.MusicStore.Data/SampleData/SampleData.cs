@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.Data.Entity;
 using SSW.MusicStore.Data.Entities;
 using SSW.MusicStore.Data;
+using Microsoft.Data.Entity.Infrastructure;
 
 namespace SSW.MusicStore.Models
 {

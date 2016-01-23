@@ -28,5 +28,8 @@ namespace SSW.MusicStore.API.Services.Query
 		/// <param name="id">Album unique id.</param>
 		/// <returns>Album entity</returns>
 		Task<Album> GetAlbumDetails(int id);
-	}
+
+        Task<IEnumerable<Album>> GetByGenreTest(string genre);
+
+    }
 }

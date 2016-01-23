@@ -55,9 +55,24 @@ namespace SSW.MusicStore.API.Controllers
 			}
 		}
 
+        [HttpGet("albums/test")]
+        public async Task<JsonResult> Test()
+        {
+            _logger.LogInformation("Get all genres");
+            try
+            {
+                var results = await this._albumQueryService.GetByGenreTest("Jazz");
+                return Json(results ?? null);
+            }
+            catch (DbException ex)
+            {
+                Log.Logger.Error("Failed to get genres", ex);
+                Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                return Json("Error occurred finding Genres" + ex.Message);
+            }
+        }
 
-
-		[HttpGet("albums/{genre}")]
+        [HttpGet("albums/{genre}")]
 		public async Task<JsonResult> Get(string genre)
 		{
 			_logger.LogInformation("Get {genre}", genre);
