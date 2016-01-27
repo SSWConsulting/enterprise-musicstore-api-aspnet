@@ -76,7 +76,10 @@ namespace SSW.MusicStore.API
 
             var builder = new ContainerBuilder();
 
+            // Load custom modules
             builder.RegisterModule(new DataModule(Configuration["Data:DefaultConnection:ConnectionString"]));
+
+            // Load web specific dependencies
             builder.RegisterType<AuthMessageSender>()
                 .As<IEmailSender>().InstancePerLifetimeScope();
             builder.RegisterType<DbContextFactory>()
@@ -96,14 +99,6 @@ namespace SSW.MusicStore.API
             var container = builder.Build();
 
             return container.Resolve<IServiceProvider>();
-
-
-            //services.AddTransient<IEmailSender, AuthMessageSender>();
-            //services.AddTransient<IDbContextFactory<MusicStoreContext>, DbContextFactory>();
-            //services.AddTransient<IGenreQueryService, GenreQueryService>();
-            //services.AddTransient<IAlbumQueryService, AlbumQueryService>();
-            //services.AddTransient<ICartQueryService, CartQueryService>();
-            //services.AddTransient<ICartCommandService, CartCommandService>();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
