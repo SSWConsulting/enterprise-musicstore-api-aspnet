@@ -1,8 +1,13 @@
 ﻿using System;
+using System.CodeDom;
+using System.Data;
 using System.Data.Common;
 
 using Microsoft.Data.Entity;
-
+using Microsoft.Data.Entity.Infrastructure;
+using Microsoft.Data.Entity.Storage.Internal;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Serilog;
 
 using SSW.MusicStore.Data.Interfaces;
@@ -19,7 +24,6 @@ namespace SSW.MusicStore.Data
 
         private readonly string connectionString;
 
-        private readonly DbConnection connection;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DbContextFactory"/> class.
@@ -30,14 +34,6 @@ namespace SSW.MusicStore.Data
             this.connectionString = connectionString;
         }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="DbContextFactory"/> class.
-        /// </summary>
-        /// <param name="connection">The connection.</param>
-        public DbContextFactory(DbConnection connection)
-        {
-            this.connection = connection;
-        }
 
         /// <summary>
         /// Creates new instance of DbContext using specified initializer.
@@ -46,22 +42,33 @@ namespace SSW.MusicStore.Data
         public virtual TDbContext Create<TDbContext>() where TDbContext : DbContext
         {
             this.logger.Debug(
-                "Creating new dbContext with connection string {connectionString}",
-                this.connection == null ? this.connectionString : this.connection.ConnectionString);
-            var optionsBuilder = new DbContextOptionsBuilder();
-            if (this.connection == null)
-            {
-                optionsBuilder.UseSqlServer(this.connectionString);
-            }
-            else
-            {
-                optionsBuilder.UseSqlServer(this.connection);
-            }
+                "Creating new dbContext with connection string {connectionString}",this.connectionString);
 
-            var args = optionsBuilder;
+            //var optionsBuilder = new DbContextOptionsBuilder();
+            //optionsBuilder.UseSqlServer(this.connectionString);
 
-            var dbContext = (TDbContext)Activator.CreateInstance(typeof(TDbContext), args);
-            dbContext.Database.EnsureCreated();
+
+            // create serviceProvider
+            var serviceProvider = new ServiceCollection()
+                .AddEntityFramework()
+                .AddSqlServer()
+                .AddDbContext<TDbContext>(options =>
+                {
+                    options.UseSqlServer(this.connectionString);
+                })
+                .GetInfrastructure()
+
+                .Replace(new ServiceDescriptor(typeof(SqlServerDatabaseCreator), typeof(SqlDbCreator), ServiceLifetime.Scoped))
+                .BuildServiceProvider();
+
+
+            var dbContext = serviceProvider.GetService<TDbContext>();
+
+ //           var dbContext = (TDbContext)Activator.CreateInstance(typeof(TDbContext), args);
+
+            logger.Information("user: {user}", System.Environment.UserName);
+
+            dbContext.Database.Migrate();
 
             return dbContext;
         }

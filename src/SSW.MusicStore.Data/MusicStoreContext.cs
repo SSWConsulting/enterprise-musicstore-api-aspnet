@@ -1,23 +1,58 @@
-﻿using Microsoft.AspNet.Identity.EntityFramework;
+﻿using System;
+using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.Data.Entity;
 using Microsoft.Data.Entity.Infrastructure;
-
+using Microsoft.Extensions.Configuration;
 using SSW.MusicStore.Data.Entities;
 
 namespace SSW.MusicStore.Data
 {
-
-	public class ApplicationUser : IdentityUser
-	{
-	}
+  
 
 	public class MusicStoreContext : DbContext
     {
-	    public MusicStoreContext(DbContextOptions options) : base(options)
-	    {
-	    }
 
-	    public DbSet<Album> Albums { get; set; }
+        /// <summary>
+        /// due to stupidity , this constuctor has to go first
+        /// </summary>
+        /// <param name="options"></param>
+
+        public MusicStoreContext(DbContextOptions options) : base(options)
+        {
+        }
+
+
+
+        #region config for EF7 migrations (where we have little control over how resources are newed up)
+
+        public IConfigurationRoot Configuration { get; set; }
+
+
+        public MusicStoreContext()
+        {
+            var builder = new ConfigurationBuilder();
+            builder.AddJsonFile("config.json");
+            Configuration = builder.Build();
+        }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (Configuration != null)
+            {
+                optionsBuilder.UseSqlServer(Configuration["Data:DefaultConnection:ConnectionString"]);
+            }
+            else
+            {
+                base.OnConfiguring(optionsBuilder);
+            }
+        }
+
+        #endregion
+        
+
+
+
+        public DbSet<Album> Albums { get; set; }
         public DbSet<Artist> Artists { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<Genre> Genres { get; set; }
@@ -38,5 +73,8 @@ namespace SSW.MusicStore.Data
 
 			base.OnModelCreating(builder);
         }
+
+
+	    
     }
 }
