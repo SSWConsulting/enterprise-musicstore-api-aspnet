@@ -127,6 +127,8 @@ namespace SSW.MusicStore.Data
 
         public void RefreshEntitiesInParentScope(IEnumerable entities)
         {
+            throw new NotImplementedException();
+
             if (entities == null)
                 return;
 
@@ -194,6 +196,8 @@ namespace SSW.MusicStore.Data
 
         public async Task RefreshEntitiesInParentScopeAsync(IEnumerable entities)
         {
+            throw new NotImplementedException();
+
             // See comments in the sync version of this method for an explanation of what we're doing here.
 
             if (entities == null)
