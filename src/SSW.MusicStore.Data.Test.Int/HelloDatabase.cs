@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Linq;
+
 using Autofac;
 using SSW.MusicStore.Data.Entities;
 using SSW.MusicStore.Data.Interfaces;
@@ -12,22 +9,23 @@ namespace SSW.MusicStore.Data.Test.Int
 {
     public class HelloDatabase
     {
-        private readonly ILifetimeScope container = null;
+        private readonly ILifetimeScope container;
+
         public HelloDatabase()
         {
-            container = Setup.Ioc.CreateIocScope();
+            this.container = Setup.Ioc.CreateIocScope();
             Setup.Logging.SerilogConfiguration();
         }
 
         [Fact]
         public void HelloDatabaseTest()
         {
-            var dbScopeFactory = container.Resolve<IDbContextScopeFactory>();
+            var dbScopeFactory = this.container.Resolve<IDbContextScopeFactory>();
 
             using (var dbScope = dbScopeFactory.Create())
             using (var dbContext = dbScope.DbContexts.Get<MusicStoreContext>())
             {
-                int countBefore = dbContext.Genres.Count();
+                var countBefore = dbContext.Genres.Count();
 
                 dbContext.Genres.Add(new Genre()
                 {
@@ -37,12 +35,7 @@ namespace SSW.MusicStore.Data.Test.Int
                 dbScope.SaveChanges();
 
                 Assert.True(dbContext.Genres.Count() == countBefore +1);
-
             }
-
-
-
         }
-
     }
 }

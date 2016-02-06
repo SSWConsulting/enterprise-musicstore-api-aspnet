@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
 using System.Runtime.ExceptionServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -27,7 +26,6 @@ namespace SSW.MusicStore.Data
     /// </summary>
     public class DbContextCollection : IDbContextCollection
     {
-        private readonly Dictionary<Type, DbContext> initializedDbContexts;
         private readonly Dictionary<DbContext, IRelationalTransaction> transactions;
         private IsolationLevel? isolationLevel;
         private readonly IDbContextFactory dbContextFactory;
@@ -35,14 +33,14 @@ namespace SSW.MusicStore.Data
         private bool completed;
         private readonly bool readOnly;
 
-        internal Dictionary<Type, DbContext> InitializedDbContexts { get { return this.initializedDbContexts; } }
+        internal Dictionary<Type, DbContext> InitializedDbContexts { get; }
 
         public DbContextCollection(bool readOnly = false, IsolationLevel? isolationLevel = null, IDbContextFactory dbContextFactory = null)
         {
             this.disposed = false;
             this.completed = false;
 
-            this.initializedDbContexts = new Dictionary<Type, DbContext>();
+            this.InitializedDbContexts = new Dictionary<Type, DbContext>();
             this.transactions = new Dictionary<DbContext, IRelationalTransaction>();
 
             this.readOnly = readOnly;
@@ -57,7 +55,7 @@ namespace SSW.MusicStore.Data
 
             var requestedType = typeof(TDbContext);
 
-            if (!this.initializedDbContexts.ContainsKey(requestedType))
+            if (!this.InitializedDbContexts.ContainsKey(requestedType))
             {
                 // First time we've been asked for this particular DbContext type.
                 // Create one, cache it and start its database transaction if needed.
@@ -65,7 +63,7 @@ namespace SSW.MusicStore.Data
                     ? this.dbContextFactory.Create<TDbContext>()
                     : Activator.CreateInstance<TDbContext>();
 
-                this.initializedDbContexts.Add(requestedType, dbContext);
+                this.InitializedDbContexts.Add(requestedType, dbContext);
 
                 if (this.readOnly)
                 {
@@ -79,7 +77,7 @@ namespace SSW.MusicStore.Data
                 }
             }
 
-            return this.initializedDbContexts[requestedType] as TDbContext;
+            return this.InitializedDbContexts[requestedType] as TDbContext;
         }
 
         public int Commit()
@@ -109,7 +107,7 @@ namespace SSW.MusicStore.Data
 
             var c = 0;
 
-            foreach (var dbContext in this.initializedDbContexts.Values)
+            foreach (var dbContext in this.InitializedDbContexts.Values)
             {
                 try
                 {
@@ -161,7 +159,7 @@ namespace SSW.MusicStore.Data
 
             var c = 0;
 
-            foreach (var dbContext in this.initializedDbContexts.Values)
+            foreach (var dbContext in this.InitializedDbContexts.Values)
             {
                 try
                 {
@@ -202,7 +200,7 @@ namespace SSW.MusicStore.Data
 
             ExceptionDispatchInfo lastError = null;
 
-            foreach (var dbContext in this.initializedDbContexts.Values)
+            foreach (var dbContext in this.InitializedDbContexts.Values)
             {
                 // There's no need to explicitly rollback changes in a DbContext as
                 // DbContext doesn't save any changes until its SaveChanges() method is called.
@@ -254,7 +252,7 @@ namespace SSW.MusicStore.Data
                 }
             }
 
-            foreach (var dbContext in this.initializedDbContexts.Values)
+            foreach (var dbContext in this.InitializedDbContexts.Values)
             {
                 try
                 {
@@ -266,7 +264,7 @@ namespace SSW.MusicStore.Data
                 }
             }
 
-            this.initializedDbContexts.Clear();
+            this.InitializedDbContexts.Clear();
             this.disposed = true;
         }
 
