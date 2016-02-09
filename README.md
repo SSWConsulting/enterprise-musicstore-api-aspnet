@@ -2,6 +2,10 @@
 
 The MVC Music Store API
 
+# Introduction Video
+
+https://www.youtube.com/watch?v=OzqnTM4xXPs&feature=youtu.be
+
 # How to start
 
 # Set up Visual Studio 2015
