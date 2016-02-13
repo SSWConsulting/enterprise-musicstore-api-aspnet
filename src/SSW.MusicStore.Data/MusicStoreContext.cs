@@ -18,10 +18,8 @@ namespace SSW.MusicStore.Data
         /// <param name="options"></param>
 
         public MusicStoreContext(DbContextOptions options) : base(options)
-        {
+        {   
         }
-
-
 
         #region config for EF7 migrations (where we have little control over how resources are newed up)
 
@@ -48,9 +46,6 @@ namespace SSW.MusicStore.Data
         }
 
         #endregion
-        
-
-
 
         public DbSet<Album> Albums { get; set; }
         public DbSet<Artist> Artists { get; set; }
