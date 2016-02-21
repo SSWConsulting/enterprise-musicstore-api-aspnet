@@ -1,29 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNet.Mvc;
+
+using Autofac.Features.OwnedInstances;
+
 using Microsoft.Data.Entity;
-using Microsoft.Extensions.DependencyInjection;
+
 using SSW.MusicStore.API.Models;
+using SSW.MusicStore.Data.Interfaces;
 
 namespace SSW.MusicStore.API.Services.Query
 {
 	public class GenreQueryService : IGenreQueryService
 	{
-		private readonly IDbContextFactory<MusicStoreContext> _dbContextFactory;
+        private readonly Func<Owned<IReadOnlyUnitOfWork>> unitOfWorkFunc;
 
-		public GenreQueryService(IDbContextFactory<MusicStoreContext> dbContextFactory)
-		{
-			_dbContextFactory = dbContextFactory;
-		}
+        public GenreQueryService(Func<Owned<IReadOnlyUnitOfWork>> unitOfWorkFunc)
+        {
+            this.unitOfWorkFunc = unitOfWorkFunc;
+        }
 
-		public async Task<IEnumerable<Genre>> GetAllGenres()
+        public async Task<IEnumerable<Genre>> GetAllGenres()
 		{
-			using (var dbContext = _dbContextFactory.Create())
+			using (var unitOfWork = unitOfWorkFunc())
 			{
-				var genres = await dbContext.Genres.ToListAsync();
-				return genres;
+			    var genres = await unitOfWork.Value.Repository<Genre>().Get().ToListAsync();
+			    return genres;
 			}
 		}
 	}

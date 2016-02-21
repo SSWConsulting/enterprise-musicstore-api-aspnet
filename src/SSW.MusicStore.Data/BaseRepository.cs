@@ -131,6 +131,11 @@ namespace SSW.MusicStore.Data
             this.DbSet.Remove(entityToDelete);
         }
 
+        public void DeleteRange(IEnumerable<TEntity> entityToDelete)
+        {
+            this.DbSet.RemoveRange(entityToDelete);
+        }
+
         public void Deactivate(TEntity entityToDeactivate)
         {
             var baseEntity = entityToDeactivate as ISoftDeletableEntity;

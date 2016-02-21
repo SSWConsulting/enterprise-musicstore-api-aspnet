@@ -3,50 +3,66 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
+using Autofac.Features.OwnedInstances;
+
 using Microsoft.Data.Entity;
 
 using SSW.MusicStore.API.Models;
 using SSW.MusicStore.API.Services.Command.Interfaces;
+using SSW.MusicStore.Data.Interfaces;
 
 namespace SSW.MusicStore.API.Services.Command
 {
     public class CartCommandService : ICartCommandService
     {
-        private readonly IDbContextFactory<MusicStoreContext> _dbContextFactory;
+        private readonly Func<Owned<IUnitOfWork>> unitOfWorkFunc;
 
-        public CartCommandService(IDbContextFactory<MusicStoreContext> dbContextFactory)
+        public CartCommandService(Func<Owned<IUnitOfWork>> unitOfWorkFunc)
         {
-            this._dbContextFactory = dbContextFactory;
+            this.unitOfWorkFunc = unitOfWorkFunc;
         }
 
         public async Task EmptyCart(string cartId, CancellationToken cancellationToken = new CancellationToken())
         {
             Serilog.Log.Logger.Debug($"{nameof(this.EmptyCart)} for cart id '{cartId}'");
-            using (var dbContext = this._dbContextFactory.Create())
+            using (var unitOfWork = this.unitOfWorkFunc())
             {
-                var cartItems = await dbContext.CartItems.Where(cart => cart.CartId == cartId).ToArrayAsync(cancellationToken);
-                dbContext.CartItems.RemoveRange(cartItems);
-                await dbContext.SaveChangesAsync(cancellationToken);
+                var repository = unitOfWork.Value.Repository<CartItem>();
+                var cartItems =
+                    await
+                        repository
+                            .Get(cart => cart.CartId == cartId)
+                            .ToArrayAsync(cancellationToken);
+                repository.DeleteRange(cartItems);
+
+                await unitOfWork.Value.SaveChangesAsync(cancellationToken);
             }
         }
 
         public async Task<int> CreateOrderFromCart(string cartId, Order order, CancellationToken cancellationToken = new CancellationToken())
         {
-            Serilog.Log.Logger.Debug($"{nameof(this.CreateOrderFromCart)} for cart id '{cartId}' and order dated {order.OrderDate.ToShortDateString()}");
-            using (var dbContext = this._dbContextFactory.Create())
+            Serilog.Log.Logger.Debug($"{nameof(this.EmptyCart)} for cart id '{cartId}'");
+            using (var unitOfWork = this.unitOfWorkFunc())
             {
+                var orderRepository = unitOfWork.Value.Repository<Order>();
+                var orderDetailsRepository = unitOfWork.Value.Repository<OrderDetail>();
+                var cartItemsRepository = unitOfWork.Value.Repository<CartItem>();
+                var albumRepository = unitOfWork.Value.Repository<Album>();
+
                 decimal orderTotal = 0;
-				dbContext.Orders.Add(order);
+                orderRepository.Add(order);
 
-
-				var cartItems =
-                    await dbContext.CartItems.Where(cart => cart.CartId == cartId).Include(c => c.Album).ToListAsync(cancellationToken);
-
+                var cartItems =
+                    await
+                        cartItemsRepository.Get(cart => cart.CartId == cartId)
+                            .Include(c => c.Album)
+                            .ToListAsync(cancellationToken);
                 // Iterate over the items in the cart, adding the order details for each
                 foreach (var item in cartItems)
                 {
                     //var album = _db.Albums.Find(item.AlbumId);
-                    var album = await dbContext.Albums.SingleAsync(a => a.AlbumId == item.AlbumId, cancellationToken);
+                    var album =
+                        await albumRepository.Get().SingleAsync(a => a.AlbumId == item.AlbumId, cancellationToken);
 
                     var orderDetail = new OrderDetail
                     {
@@ -57,20 +73,20 @@ namespace SSW.MusicStore.API.Services.Command
                     };
 
                     // Set the order total of the shopping cart
-                    orderTotal += (item.Count * album.Price);
-                    dbContext.OrderDetails.Add(orderDetail);
+                    orderTotal += item.Count * album.Price;
+                    orderDetailsRepository.Add(orderDetail);
                 }
 
                 // Set the order's total to the orderTotal count
                 order.Total = orderTotal;
 
 
-				// Empty the shopping cart
-				var cartItemsToClear = await dbContext.CartItems.Where(cart => cart.CartId == cartId).ToArrayAsync(cancellationToken);
-                dbContext.CartItems.RemoveRange(cartItemsToClear);
+                // Empty the shopping cart
+                var cartItemsToClear = await cartItemsRepository.Get(cart => cart.CartId == cartId).ToArrayAsync(cancellationToken);
+                cartItemsRepository.DeleteRange(cartItemsToClear);
 
                 // Save all the changes
-                await dbContext.SaveChangesAsync(cancellationToken);
+                await unitOfWork.Value.SaveChangesAsync(cancellationToken);
 
                 return order.OrderId;
             }
@@ -79,12 +95,14 @@ namespace SSW.MusicStore.API.Services.Command
         public async Task AddToCart(string cartId, Album album, CancellationToken cancellationToken = default(CancellationToken))
         {
             Serilog.Log.Logger.Debug($"{nameof(this.AddToCart)} album '{album.Title}' for cart with id '{cartId}'");
-            using (var dbContext = this._dbContextFactory.Create())
+            using (var unitOfWork = this.unitOfWorkFunc())
             {
+                var cartItemsRepository = unitOfWork.Value.Repository<CartItem>();
+
                 // Get the matching cart and album instances
                 var cartItem =
                     await
-                        dbContext.CartItems.SingleOrDefaultAsync(
+                        cartItemsRepository.Get().SingleOrDefaultAsync(
                             c => c.CartId == cartId && c.AlbumId == album.AlbumId,
                             cancellationToken);
 
@@ -99,7 +117,7 @@ namespace SSW.MusicStore.API.Services.Command
                         DateCreated = DateTime.Now
                     };
 
-                    dbContext.CartItems.Add(cartItem);
+                    cartItemsRepository.Add(cartItem);
                 }
                 else
                 {
@@ -107,17 +125,19 @@ namespace SSW.MusicStore.API.Services.Command
                     cartItem.Count++;
                 }
 
-                await dbContext.SaveChangesAsync(cancellationToken);
+                await unitOfWork.Value.SaveChangesAsync(cancellationToken);
             }
         }
 
         public async Task<int> RemoveCartItem(int cartItemId, CancellationToken cancellationToken = new CancellationToken())
         {
             Serilog.Log.Logger.Debug($"{nameof(this.RemoveCartItem)} for cart item with id '{cartItemId}'");
-            using (var dbContext = this._dbContextFactory.Create())
+            using (var unitOfWork = this.unitOfWorkFunc())
             {
+                var cartItemsRepository = unitOfWork.Value.Repository<CartItem>();
+
                 // Get the cart
-                var cartItem = await dbContext.CartItems.SingleOrDefaultAsync(c => c.CartItemId == cartItemId, cancellationToken);
+                var cartItem = await cartItemsRepository.Get().SingleOrDefaultAsync(c => c.CartItemId == cartItemId, cancellationToken);
 
                 if (cartItem == null)
                 {
@@ -135,10 +155,10 @@ namespace SSW.MusicStore.API.Services.Command
                 }
                 else
                 {
-                    dbContext.CartItems.Remove(cartItem);
+                    cartItemsRepository.Delete(cartItem);
                 }
 
-                await dbContext.SaveChangesAsync(cancellationToken);
+                await unitOfWork.Value.SaveChangesAsync(cancellationToken);
                 return itemCount;
             }
         }

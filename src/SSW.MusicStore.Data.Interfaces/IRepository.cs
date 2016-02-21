@@ -100,5 +100,11 @@ namespace SSW.MusicStore.Data.Interfaces
         /// </summary>
         /// <param name="entityToDeactivate">The entity to deactivate.</param>
         void Deactivate(TEntity entityToDeactivate);
+
+        /// <summary>
+        /// Deletes the range of entities.
+        /// </summary>
+        /// <param name="entityToDelete">The entity to delete.</param>
+        void DeleteRange(IEnumerable<TEntity> entityToDelete);
     }
 }

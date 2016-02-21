@@ -24,14 +24,11 @@ using Autofac.Extensions.DependencyInjection;
 
 using SerilogWeb.Classic.Enrichers;
 
-using SSW.MusicStore.API.Services.Command;
-using SSW.MusicStore.API.Services.Command.Interfaces;
-using SSW.MusicStore.API.Services.Query.Interfaces;
 using Microsoft.Extensions.PlatformAbstractions;
 
+using SSW.MusicStore.Data;
+using SSW.MusicStore.Data.Initializers;
 using SSW.MusicStore.DependencyResolution;
-
-using ServiceDescriptor = Microsoft.Extensions.DependencyInjection.ServiceDescriptor;
 
 namespace SSW.MusicStore.API
 {
@@ -61,10 +58,7 @@ namespace SSW.MusicStore.API
 
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            services.AddEntityFramework()
-                .AddSqlServer()
-                .AddDbContext<MusicStoreContext>(options =>
-                options.UseSqlServer(Configuration["Data:DefaultConnection:ConnectionString"]));
+            services.AddEntityFramework().AddSqlServer();
 
             services.AddCors();
 
@@ -77,21 +71,14 @@ namespace SSW.MusicStore.API
             var builder = new ContainerBuilder();
 
             // Load custom modules
-            builder.RegisterModule(new DataModule(Configuration["Data:DefaultConnection:ConnectionString"]));
+            var databaseInitializer = new MigrateToLatestVersion(new SampleDataSeeder());
+            builder.RegisterModule(
+                new DataModule(this.Configuration["Data:DefaultConnection:ConnectionString"], databaseInitializer));
 
             // Load web specific dependencies
             builder.RegisterType<AuthMessageSender>()
                 .As<IEmailSender>().InstancePerLifetimeScope();
-            builder.RegisterType<DbContextFactory>()
-                .As<IDbContextFactory<MusicStoreContext>>().InstancePerLifetimeScope();
-            builder.RegisterType<GenreQueryService>()
-                .As<IGenreQueryService>().InstancePerLifetimeScope();
-            builder.RegisterType<AlbumQueryService>()
-                .As<IAlbumQueryService>().InstancePerLifetimeScope();
-            builder.RegisterType<CartQueryService>()
-                .As<ICartQueryService>().InstancePerLifetimeScope();
-            builder.RegisterType<CartCommandService>()
-                .As<ICartCommandService>().InstancePerLifetimeScope();
+            builder.RegisterAssemblyTypes(typeof(Startup).Assembly).AsImplementedInterfaces();
 
             //Populate the container with services that were previously registered
             builder.Populate(services);

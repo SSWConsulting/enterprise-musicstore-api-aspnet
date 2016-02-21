@@ -1,8 +1,4 @@
-﻿using System.Reflection;
-
-using Autofac;
-
-using Microsoft.Data.Entity.Infrastructure;
+﻿using Autofac;
 
 using SSW.MusicStore.Data;
 using SSW.MusicStore.Data.Initializers;
@@ -44,8 +40,13 @@ namespace SSW.MusicStore.DependencyResolution
                 builder.RegisterInstance(this.databaseInitializer).As<IDatabaseInitializer>();
             }
 
+            builder.RegisterType<DbContextScope>().As<IDbContextScope>();
+            builder.RegisterType<AutofacRepositoryResolver>().As<IRepositoryResolver>();
             builder.RegisterType<DbContextScopeFactory>().As<IDbContextScopeFactory>().InstancePerLifetimeScope();
+            builder.RegisterType<RepositoryLocator>().As<IRepositoryLocator>().InstancePerLifetimeScope();
             builder.RegisterType<AmbientDbContextLocator>().As<IAmbientDbContextLocator>();
+            builder.RegisterType<UnitOfWork>().As<IUnitOfWork>();
+            builder.RegisterType<ReadOnlyUnitOfWork>().As<IReadOnlyUnitOfWork>();
         }
     }
 }

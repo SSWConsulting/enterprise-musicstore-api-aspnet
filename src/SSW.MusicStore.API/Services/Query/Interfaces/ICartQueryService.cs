@@ -18,7 +18,7 @@ namespace SSW.MusicStore.API.Services.Query.Interfaces
         /// </returns>
         Task<Cart> GetCart(string userId, CancellationToken cancellationToken = default(CancellationToken));
 
-		List<Order> GetOrders(string userId, CancellationToken cancellationToken = default(CancellationToken));
+        Task<List<Order>> GetOrders(string userId, CancellationToken cancellationToken = default(CancellationToken));
 
 	}
 }

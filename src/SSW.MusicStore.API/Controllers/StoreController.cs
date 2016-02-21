@@ -61,7 +61,7 @@ namespace SSW.MusicStore.API.Controllers
             _logger.LogInformation("Get all genres");
             try
             {
-                var results = await this._albumQueryService.GetByGenreTest("Jazz");
+                var results = await this._albumQueryService.GetByGenre("Jazz");
                 return Json(results ?? null);
             }
             catch (DbException ex)

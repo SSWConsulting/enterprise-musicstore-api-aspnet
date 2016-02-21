@@ -29,7 +29,5 @@ namespace SSW.MusicStore.API.Services.Query
 		/// <returns>Album entity</returns>
 		Task<Album> GetAlbumDetails(int id);
 
-        Task<IEnumerable<Album>> GetByGenreTest(string genre);
-
     }
 }
