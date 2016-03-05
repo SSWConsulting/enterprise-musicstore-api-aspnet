@@ -8,6 +8,7 @@ namespace SSW.MusicStore.Data.Entities
         public int CartItemId { get; set; }
 
         [Required]
+        [MaxLength(256)]
         public string CartId { get; set; }
         public int AlbumId { get; set; }
         public int Count { get; set; }

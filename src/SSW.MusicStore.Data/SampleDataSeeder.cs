@@ -16,7 +16,7 @@ namespace SSW.MusicStore.Data
 
 	    public void Seed<TDbContext>(TDbContext dbContext) where TDbContext : DbContext
 	    {
-	        this.InsertTestData(dbContext);
+            this.InsertTestData(dbContext);
 	        dbContext.SaveChanges();
 	    }
 

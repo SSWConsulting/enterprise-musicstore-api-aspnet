@@ -6,7 +6,8 @@ using Autofac.Features.OwnedInstances;
 
 using Microsoft.Data.Entity;
 
-using SSW.MusicStore.API.Models;
+using SSW.MusicStore.API.Services.Query.Interfaces;
+using SSW.MusicStore.Data.Entities;
 using SSW.MusicStore.Data.Interfaces;
 
 namespace SSW.MusicStore.API.Services.Query
@@ -22,7 +23,7 @@ namespace SSW.MusicStore.API.Services.Query
 
         public async Task<IEnumerable<Genre>> GetAllGenres()
 		{
-			using (var unitOfWork = unitOfWorkFunc())
+			using (var unitOfWork = this.unitOfWorkFunc())
 			{
 			    var genres = await unitOfWork.Value.Repository<Genre>().Get().ToListAsync();
 			    return genres;

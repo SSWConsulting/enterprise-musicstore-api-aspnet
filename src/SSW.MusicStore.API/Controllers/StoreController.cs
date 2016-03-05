@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Mvc;
-using SSW.MusicStore.API.Models;
 
 using System.Linq;
 using System.Net;
@@ -11,9 +10,10 @@ using Microsoft.AspNet.Authorization;
 using Microsoft.Extensions.Logging;
 
 using Serilog;
-using SSW.MusicStore.API.Services.Query;
+using SSW.MusicStore.API.Services.Query.Interfaces;
 
 using ILogger = Microsoft.Extensions.Logging.ILogger;
+using SSW.MusicStore.Data.Entities;
 
 namespace SSW.MusicStore.API.Controllers
 {

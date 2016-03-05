@@ -2,10 +2,9 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Mvc;
-using SSW.MusicStore.API.Models;
 using SSW.MusicStore.API.ViewModels;
 using Microsoft.AspNet.Authorization;
-using SSW.MusicStore.API.Services.Query;
+
 using System;
 
 using Microsoft.Extensions.Logging;
@@ -13,15 +12,13 @@ using Microsoft.Extensions.Logging;
 using SSW.MusicStore.API.Helpers;
 using SSW.MusicStore.API.Services.Command.Interfaces;
 using SSW.MusicStore.API.Services.Query.Interfaces;
+using SSW.MusicStore.Data.Entities;
 
 namespace SSW.MusicStore.API.Controllers
 {
 	[Route("api")]
     public class ShoppingCartController : Controller
     {
-		[FromServices]
-		public MusicStoreContext DbContext { get; set; }
-
 		private readonly IServiceProvider _serviceProvider;
 		private readonly IAlbumQueryService _albumQueryService;
         private readonly ICartQueryService _cartQueryService;

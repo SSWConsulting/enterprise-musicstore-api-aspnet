@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using SSW.MusicStore.API.Models;
 
-namespace SSW.MusicStore.API.Services.Query
+using SSW.MusicStore.Data.Entities;
+
+namespace SSW.MusicStore.API.Services.Query.Interfaces
 {
     public interface IAlbumQueryService
     {

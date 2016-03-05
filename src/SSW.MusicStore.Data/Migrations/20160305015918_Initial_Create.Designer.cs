@@ -3,21 +3,21 @@ using Microsoft.Data.Entity;
 using Microsoft.Data.Entity.Infrastructure;
 using Microsoft.Data.Entity.Metadata;
 using Microsoft.Data.Entity.Migrations;
-using SSW.MusicStore.API.Models;
+using SSW.MusicStore.Data;
 
-namespace SSW.MusicStore.API.Migrations
+namespace SSW.MusicStore.Data.Migrations
 {
     [DbContext(typeof(MusicStoreContext))]
-    [Migration("20151107064116_Added_Cart")]
-    partial class Added_Cart
+    [Migration("20160305015918_Initial_Create")]
+    partial class Initial_Create
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.0-beta8-15964")
+                .HasAnnotation("ProductVersion", "7.0.0-rc1-16348")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("SSW.MusicStore.API.Models.Album", b =>
+            modelBuilder.Entity("SSW.MusicStore.Data.Entities.Album", b =>
                 {
                     b.Property<int>("AlbumId")
                         .ValueGeneratedOnAdd();
@@ -40,7 +40,7 @@ namespace SSW.MusicStore.API.Migrations
                     b.HasKey("AlbumId");
                 });
 
-            modelBuilder.Entity("SSW.MusicStore.API.Models.Artist", b =>
+            modelBuilder.Entity("SSW.MusicStore.Data.Entities.Artist", b =>
                 {
                     b.Property<int>("ArtistId");
 
@@ -50,15 +50,15 @@ namespace SSW.MusicStore.API.Migrations
                     b.HasKey("ArtistId");
                 });
 
-            modelBuilder.Entity("SSW.MusicStore.API.Models.Cart", b =>
+            modelBuilder.Entity("SSW.MusicStore.Data.Entities.Cart", b =>
                 {
                     b.Property<string>("CartId")
-                        .HasAnnotation("MaxLength", 500);
+                        .HasAnnotation("MaxLength", 256);
 
                     b.HasKey("CartId");
                 });
 
-            modelBuilder.Entity("SSW.MusicStore.API.Models.CartItem", b =>
+            modelBuilder.Entity("SSW.MusicStore.Data.Entities.CartItem", b =>
                 {
                     b.Property<int>("CartItemId")
                         .ValueGeneratedOnAdd();
@@ -67,7 +67,7 @@ namespace SSW.MusicStore.API.Migrations
 
                     b.Property<string>("CartId")
                         .IsRequired()
-                        .HasAnnotation("MaxLength", 500);
+                        .HasAnnotation("MaxLength", 256);
 
                     b.Property<int>("Count");
 
@@ -76,7 +76,7 @@ namespace SSW.MusicStore.API.Migrations
                     b.HasKey("CartItemId");
                 });
 
-            modelBuilder.Entity("SSW.MusicStore.API.Models.Genre", b =>
+            modelBuilder.Entity("SSW.MusicStore.Data.Entities.Genre", b =>
                 {
                     b.Property<int>("GenreId");
 
@@ -88,7 +88,7 @@ namespace SSW.MusicStore.API.Migrations
                     b.HasKey("GenreId");
                 });
 
-            modelBuilder.Entity("SSW.MusicStore.API.Models.Order", b =>
+            modelBuilder.Entity("SSW.MusicStore.Data.Entities.Order", b =>
                 {
                     b.Property<int>("OrderId")
                         .ValueGeneratedOnAdd();
@@ -137,7 +137,7 @@ namespace SSW.MusicStore.API.Migrations
                     b.HasKey("OrderId");
                 });
 
-            modelBuilder.Entity("SSW.MusicStore.API.Models.OrderDetail", b =>
+            modelBuilder.Entity("SSW.MusicStore.Data.Entities.OrderDetail", b =>
                 {
                     b.Property<int>("OrderDetailId")
                         .ValueGeneratedOnAdd();
@@ -153,31 +153,31 @@ namespace SSW.MusicStore.API.Migrations
                     b.HasKey("OrderDetailId");
                 });
 
-            modelBuilder.Entity("SSW.MusicStore.API.Models.Album", b =>
+            modelBuilder.Entity("SSW.MusicStore.Data.Entities.Album", b =>
                 {
-                    b.HasOne("SSW.MusicStore.API.Models.Artist")
+                    b.HasOne("SSW.MusicStore.Data.Entities.Artist")
                         .WithMany()
                         .HasForeignKey("ArtistId");
 
-                    b.HasOne("SSW.MusicStore.API.Models.Genre")
+                    b.HasOne("SSW.MusicStore.Data.Entities.Genre")
                         .WithMany()
                         .HasForeignKey("GenreId");
                 });
 
-            modelBuilder.Entity("SSW.MusicStore.API.Models.CartItem", b =>
+            modelBuilder.Entity("SSW.MusicStore.Data.Entities.CartItem", b =>
                 {
-                    b.HasOne("SSW.MusicStore.API.Models.Album")
+                    b.HasOne("SSW.MusicStore.Data.Entities.Album")
                         .WithMany()
                         .HasForeignKey("AlbumId");
 
-                    b.HasOne("SSW.MusicStore.API.Models.Cart")
+                    b.HasOne("SSW.MusicStore.Data.Entities.Cart")
                         .WithMany()
                         .HasForeignKey("CartId");
                 });
 
-            modelBuilder.Entity("SSW.MusicStore.API.Models.OrderDetail", b =>
+            modelBuilder.Entity("SSW.MusicStore.Data.Entities.OrderDetail", b =>
                 {
-                    b.HasOne("SSW.MusicStore.API.Models.Order")
+                    b.HasOne("SSW.MusicStore.Data.Entities.Order")
                         .WithMany()
                         .HasForeignKey("OrderId");
                 });

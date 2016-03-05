@@ -28,7 +28,8 @@
     "Microsoft.Extensions.Configuration.UserSecrets": "1.0.0-rc1-final",
     "SSW.MusicStore.Data.Interfaces": "1.0.0-*",
     "SSW.MusicStore.DependencyResolution": "1.0.0-*",
-    "EntityFramework.Core": "7.0.0-rc1-final"
+    "EntityFramework.Core": "7.0.0-rc1-final",
+    "SSW.MusicStore.Data": "1.0.0-*"
   },
 
     "commands": {

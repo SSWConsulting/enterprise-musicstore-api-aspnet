@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Mvc;
 using Microsoft.Data.Entity;
-using SSW.MusicStore.API.Models;
+using SSW.MusicStore.Data;
+using SSW.MusicStore.Data.Entities;
 
 namespace SSW.MusicStore.API.Controllers
 {

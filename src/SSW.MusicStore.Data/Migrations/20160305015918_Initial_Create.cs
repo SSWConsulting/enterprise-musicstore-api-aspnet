@@ -5,7 +5,7 @@ using Microsoft.Data.Entity.Metadata;
 
 namespace SSW.MusicStore.Data.Migrations
 {
-    public partial class InitialCreate : Migration
+    public partial class Initial_Create : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -19,6 +19,16 @@ namespace SSW.MusicStore.Data.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Artist", x => x.ArtistId);
+                });
+            migrationBuilder.CreateTable(
+                name: "Cart",
+                columns: table => new
+                {
+                    CartId = table.Column<string>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Cart", x => x.CartId);
                 });
             migrationBuilder.CreateTable(
                 name: "Genre",
@@ -125,6 +135,12 @@ namespace SSW.MusicStore.Data.Migrations
                         principalTable: "Album",
                         principalColumn: "AlbumId",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CartItem_Cart_CartId",
+                        column: x => x.CartId,
+                        principalTable: "Cart",
+                        principalColumn: "CartId",
+                        onDelete: ReferentialAction.Cascade);
                 });
         }
 
@@ -133,6 +149,7 @@ namespace SSW.MusicStore.Data.Migrations
             migrationBuilder.DropTable("CartItem");
             migrationBuilder.DropTable("OrderDetail");
             migrationBuilder.DropTable("Album");
+            migrationBuilder.DropTable("Cart");
             migrationBuilder.DropTable("Order");
             migrationBuilder.DropTable("Artist");
             migrationBuilder.DropTable("Genre");

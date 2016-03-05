@@ -36,7 +36,7 @@ namespace SSW.MusicStore.Data.Initializers
                 var runSeed = false;
                 if (this.DataSeeder != null)
                 {
-                    runSeed = this.CheckIfDatabaseExists(dbContext);
+                    runSeed = !this.CheckIfDatabaseExists(dbContext);
                 }
 
                 this.logger.Debug("Run database migrations.");

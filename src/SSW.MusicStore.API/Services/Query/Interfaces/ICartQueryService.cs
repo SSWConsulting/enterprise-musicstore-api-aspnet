@@ -1,8 +1,9 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 
-using SSW.MusicStore.API.Models;
 using System.Collections.Generic;
+
+using SSW.MusicStore.Data.Entities;
 
 namespace SSW.MusicStore.API.Services.Query.Interfaces
 {

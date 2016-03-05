@@ -2,20 +2,20 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Threading;
-using System.Threading.Tasks;
 
 using Microsoft.Data.Entity;
 
+using SSW.MusicStore.Data.Entities;
 using SSW.MusicStore.Data.Extensions;
 using SSW.MusicStore.Data.Interfaces;
 
 namespace SSW.MusicStore.Data
 {
     /// <summary>
-    /// The base repository 
+    /// The base repository
     /// </summary>
     /// <typeparam name="TEntity">The type of the entity.</typeparam>
+    /// <typeparam name="TDbContext">The type of the database context.</typeparam>
     public class BaseRepository<TEntity, TDbContext> : IRepository<TEntity>
         where TEntity : class where TDbContext : DbContext
     {
@@ -44,7 +44,7 @@ namespace SSW.MusicStore.Data
         /// Gets the context.
         /// </summary>
         /// <value>The context.</value>
-        protected DbContext Context => this.DbContextScopeLocator.Get<TDbContext>();
+        protected TDbContext Context => this.DbContextScopeLocator.Get<TDbContext>();
 
         /// <summary>
         /// Gets the database set.

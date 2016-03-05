@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -7,8 +6,8 @@ using Autofac.Features.OwnedInstances;
 
 using Microsoft.Data.Entity;
 
-using SSW.MusicStore.API.Models;
 using SSW.MusicStore.API.Services.Command.Interfaces;
+using SSW.MusicStore.Data.Entities;
 using SSW.MusicStore.Data.Interfaces;
 
 namespace SSW.MusicStore.API.Services.Command

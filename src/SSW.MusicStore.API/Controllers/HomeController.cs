@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Microsoft.AspNet.Mvc;
-using Microsoft.Extensions.Caching.Memory;
-using SSW.MusicStore.API.Models;
-using System.Linq;
-using Microsoft.Data.Entity;
-using Microsoft.AspNet.Authorization;
+﻿using Microsoft.AspNet.Mvc;
 
 namespace SSW.MusicStore.API.Controllers
 {

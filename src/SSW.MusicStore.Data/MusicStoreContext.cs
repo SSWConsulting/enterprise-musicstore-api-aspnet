@@ -13,7 +13,7 @@ namespace SSW.MusicStore.Data
     {
 
         /// <summary>
-        /// due to stupidity , this constuctor has to go first
+        /// due to stupidity , this constructor has to go first
         /// </summary>
         /// <param name="options"></param>
 
@@ -47,12 +47,13 @@ namespace SSW.MusicStore.Data
 
         #endregion
 
-        public DbSet<Album> Albums { get; set; }
-        public DbSet<Artist> Artists { get; set; }
-        public DbSet<Order> Orders { get; set; }
-        public DbSet<Genre> Genres { get; set; }
-        public DbSet<CartItem> CartItems { get; set; }
-        public DbSet<OrderDetail> OrderDetails { get; set; }
+        public virtual DbSet<Album> Albums { get; set; }
+        public virtual DbSet<Artist> Artists { get; set; }
+        public virtual DbSet<Order> Orders { get; set; }
+        public virtual DbSet<Genre> Genres { get; set; }
+        public virtual DbSet<Cart> Carts { get; set; }
+        public virtual DbSet<CartItem> CartItems { get; set; }
+        public virtual DbSet<OrderDetail> OrderDetails { get; set; }
 
 	    protected override void OnModelCreating(ModelBuilder builder)
         {

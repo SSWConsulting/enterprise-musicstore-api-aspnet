@@ -49,6 +49,14 @@ namespace SSW.MusicStore.Data.Migrations
                     b.HasKey("ArtistId");
                 });
 
+            modelBuilder.Entity("SSW.MusicStore.Data.Entities.Cart", b =>
+                {
+                    b.Property<string>("CartId")
+                        .HasAnnotation("MaxLength", 256);
+
+                    b.HasKey("CartId");
+                });
+
             modelBuilder.Entity("SSW.MusicStore.Data.Entities.CartItem", b =>
                 {
                     b.Property<int>("CartItemId")
@@ -57,7 +65,8 @@ namespace SSW.MusicStore.Data.Migrations
                     b.Property<int>("AlbumId");
 
                     b.Property<string>("CartId")
-                        .IsRequired();
+                        .IsRequired()
+                        .HasAnnotation("MaxLength", 256);
 
                     b.Property<int>("Count");
 
@@ -159,6 +168,10 @@ namespace SSW.MusicStore.Data.Migrations
                     b.HasOne("SSW.MusicStore.Data.Entities.Album")
                         .WithMany()
                         .HasForeignKey("AlbumId");
+
+                    b.HasOne("SSW.MusicStore.Data.Entities.Cart")
+                        .WithMany()
+                        .HasForeignKey("CartId");
                 });
 
             modelBuilder.Entity("SSW.MusicStore.Data.Entities.OrderDetail", b =>

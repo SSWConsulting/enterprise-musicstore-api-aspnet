@@ -1,23 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
 
 using Microsoft.AspNet.Authentication.JwtBearer;
 using Microsoft.AspNet.Builder;
-using Microsoft.AspNet.Diagnostics.Entity;
 using Microsoft.AspNet.Hosting;
-using Microsoft.Data.Entity;
-using Microsoft.Dnx.Runtime;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Serialization;
 using Serilog;
-using SSW.MusicStore.API.Models;
+
 using SSW.MusicStore.API.Services;
-using SSW.MusicStore.API.Services.Query;
+
 using System.Threading.Tasks;
-using System.Linq;
-using System.Linq.Expressions;
 
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
@@ -58,8 +52,6 @@ namespace SSW.MusicStore.API
 
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            services.AddEntityFramework().AddSqlServer();
-
             services.AddCors();
 
             services.AddMvc().AddJsonOptions(
@@ -70,15 +62,14 @@ namespace SSW.MusicStore.API
 
             var builder = new ContainerBuilder();
 
-            // Load custom modules
-            var databaseInitializer = new MigrateToLatestVersion(new SampleDataSeeder());
-            builder.RegisterModule(
-                new DataModule(this.Configuration["Data:DefaultConnection:ConnectionString"], databaseInitializer));
-
             // Load web specific dependencies
             builder.RegisterType<AuthMessageSender>()
                 .As<IEmailSender>().InstancePerLifetimeScope();
             builder.RegisterAssemblyTypes(typeof(Startup).Assembly).AsImplementedInterfaces();
+
+            var databaseInitializer = new MigrateToLatestVersion(new SampleDataSeeder());
+            builder.RegisterModule(
+                new DataModule(this.Configuration["Data:DefaultConnection:ConnectionString"], databaseInitializer));
 
             //Populate the container with services that were previously registered
             builder.Populate(services);
@@ -149,9 +140,6 @@ namespace SSW.MusicStore.API
 
             // Note: this line must be after the OAuth config above
             app.UseMvc();
-
-            //Slows web api - only do this on first run to popular db
-            SampleData.InitializeMusicStoreDatabaseAsync(app.ApplicationServices).Wait();
         }
     }
 }

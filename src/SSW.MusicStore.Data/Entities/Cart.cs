@@ -1,32 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Threading.Tasks;
 
-namespace SSW.MusicStore.API.Models
+namespace SSW.MusicStore.Data.Entities
 {
     public class Cart
     {
         public Cart()
         {
-            CartItems = new Collection<CartItem>();
+            this.CartItems = new Collection<CartItem>();
         }
 
         [Required]
+        [MaxLength(256)]
         public string CartId { get; set; }
 
         public virtual ICollection<CartItem> CartItems { get; set; }
 
         public int GetCount()
         {
-            return CartItems.Select(c => c.Count).Sum();
+            return this.CartItems.Select(c => c.Count).Sum();
         }
 
         public decimal GetTotal()
         {
-            return CartItems.Select(c => c.Count * c.Album.Price).Sum();
+            return this.CartItems.Select(c => c.Count * c.Album.Price).Sum();
         }
     }
 }
