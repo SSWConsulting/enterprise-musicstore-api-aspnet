@@ -19,7 +19,7 @@ using Autofac.Extensions.DependencyInjection;
 using SerilogWeb.Classic.Enrichers;
 
 using Microsoft.Extensions.PlatformAbstractions;
-
+using SSW.MusicStore.API.Filters;
 using SSW.MusicStore.Data;
 using SSW.MusicStore.Data.Initializers;
 using SSW.MusicStore.DependencyResolution;
@@ -54,11 +54,20 @@ namespace SSW.MusicStore.API
         {
             services.AddCors();
 
-            services.AddMvc().AddJsonOptions(
-                opt =>
-                {
-                    opt.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
-                });
+            services
+                .AddMvc()
+                .AddJsonOptions(
+                    options =>
+                        {
+                            options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+                        })
+                .AddMvcOptions(
+                    options =>
+                    {
+                        options.Filters.Add(new MvcLogActionFilter());
+                        options.Filters.Add(new MvcExceptionActionFilter());
+                        options.Filters.Add(new MvcValidateModelActionFilter());
+                    });
 
             var builder = new ContainerBuilder();
 
@@ -71,7 +80,7 @@ namespace SSW.MusicStore.API
             builder.RegisterModule(
                 new DataModule(this.Configuration["Data:DefaultConnection:ConnectionString"], databaseInitializer));
 
-            //Populate the container with services that were previously registered
+            // Populate the container with services that were previously registered
             builder.Populate(services);
 
             var container = builder.Build();
@@ -140,6 +149,7 @@ namespace SSW.MusicStore.API
 
             // Note: this line must be after the OAuth config above
             app.UseMvc();
+
         }
     }
 }

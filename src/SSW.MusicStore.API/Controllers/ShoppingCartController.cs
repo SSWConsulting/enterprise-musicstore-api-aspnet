@@ -19,11 +19,10 @@ namespace SSW.MusicStore.API.Controllers
 	[Route("api")]
     public class ShoppingCartController : Controller
     {
-		private readonly IServiceProvider _serviceProvider;
 		private readonly IAlbumQueryService _albumQueryService;
         private readonly ICartQueryService _cartQueryService;
         private readonly ICartCommandService _cartCommandService;
-        private readonly Microsoft.Extensions.Logging.ILogger _logger;
+        private readonly ILogger _logger;
 
 		public ShoppingCartController(
 			ILoggerFactory loggerfactory,
@@ -32,7 +31,6 @@ namespace SSW.MusicStore.API.Controllers
             ICartQueryService cartQueryService,
             ICartCommandService cartCommandService)
 		{
-			_serviceProvider = serviceProvider;
 			_albumQueryService = albumQueryService;
 		    _cartQueryService = cartQueryService;
 		    _cartCommandService = cartCommandService;
@@ -47,8 +45,6 @@ namespace SSW.MusicStore.API.Controllers
         [HttpGet("cart")]
         public async Task<IActionResult> GetCurrentCart()
         {
-            _logger.LogInformation("GET request for 'api/cart'");
-
             // Get current cart for the logged in user
             var viewModel = await GetCart();
 
@@ -66,8 +62,6 @@ namespace SSW.MusicStore.API.Controllers
         [HttpPost("cart/{id}")]
         public async Task<IActionResult> AddToCart(int id, CancellationToken requestAborted)
         {
-            _logger.LogInformation("POST request for 'api/{albumId}'", id);
-
             // Retrieve the album from the database
             var addedAlbum = await _albumQueryService.GetAlbumDetails(id);
 
@@ -88,8 +82,6 @@ namespace SSW.MusicStore.API.Controllers
 		[HttpGet("order")]
 		public IActionResult GetOrders(CancellationToken requestAborted)
 		{
-			_logger.LogInformation("GET request for 'api/order'");
-
 			// Add it to the order
 			var viewModel =  _cartQueryService.GetOrders(GetCartId(), requestAborted);
 
@@ -106,8 +98,6 @@ namespace SSW.MusicStore.API.Controllers
 		[HttpPost("order")]
 		public async Task<IActionResult> CreateOrderFromCart([FromBody] OrderViewModel order, CancellationToken requestAborted)
 		{
-			_logger.LogInformation("POST request for 'api/order/'");
-
 			var addedOrder = new Order
 			{
 				Address = order.Address,
@@ -140,8 +130,6 @@ namespace SSW.MusicStore.API.Controllers
         [HttpPost("cart/clear")]
         public async Task<IActionResult> EmptyCart(CancellationToken requestAborted)
         {
-            _logger.LogInformation("POST request for 'api/clear'");
-
             // Clear shopping cart
             await this._cartCommandService.EmptyCart(GetCartId(), requestAborted);
 
@@ -160,8 +148,6 @@ namespace SSW.MusicStore.API.Controllers
         [HttpDelete("cart/{id}")]
         public async Task<IActionResult> RemoveFromCart(int id, CancellationToken requestAborted)
         {
-            _logger.LogInformation("DELETE request for 'api/{cartItemId}'", id);
-
             // Remove item from the shopping cart
             await _cartCommandService.RemoveCartItem(id, requestAborted);
 
@@ -188,6 +174,7 @@ namespace SSW.MusicStore.API.Controllers
                 }).ToList(),
                 CartTotal = cart.GetTotal()
             };
+
             return viewModel;
         }
 
