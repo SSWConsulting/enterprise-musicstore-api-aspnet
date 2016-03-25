@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Mvc;
 using SSW.MusicStore.API.ViewModels;
@@ -10,8 +9,8 @@ using System;
 using Microsoft.Extensions.Logging;
 
 using SSW.MusicStore.API.Helpers;
-using SSW.MusicStore.API.Services.Command.Interfaces;
-using SSW.MusicStore.API.Services.Query.Interfaces;
+using SSW.MusicStore.BusinessLogic.Interfaces.Command;
+using SSW.MusicStore.BusinessLogic.Interfaces.Query;
 using SSW.MusicStore.Data.Entities;
 
 namespace SSW.MusicStore.API.Controllers
@@ -26,7 +25,6 @@ namespace SSW.MusicStore.API.Controllers
 
 		public ShoppingCartController(
 			ILoggerFactory loggerfactory,
-			IServiceProvider serviceProvider,
 			IAlbumQueryService albumQueryService,
             ICartQueryService cartQueryService,
             ICartCommandService cartCommandService)
@@ -88,11 +86,11 @@ namespace SSW.MusicStore.API.Controllers
 			return Json(viewModel);
 		}
 
-		/// <summary>Create order from cart.
-		/// </summary>
-		/// <param name="id">The identifier.</param>
-		/// <returns>Cart object including shopping cart items and totals</returns>
-		[Authorize(ActiveAuthenticationSchemes = "Bearer")]
+	    /// <summary>Create order from cart.
+	    /// </summary>
+	    /// <param name="order">Order to create</param>
+	    /// <returns>Cart object including shopping cart items and totals</returns>
+	    [Authorize(ActiveAuthenticationSchemes = "Bearer")]
 		[HttpPost("order/create")]
 		public async Task<IActionResult> CreateOrderFromCart([FromBody] OrderViewModel order)
 		{

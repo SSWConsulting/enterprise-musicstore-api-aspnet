@@ -5,7 +5,7 @@ using Microsoft.AspNet.Mvc;
 using System.Linq;
 using Microsoft.AspNet.Authorization;
 using Serilog;
-using SSW.MusicStore.API.Services.Query.Interfaces;
+using SSW.MusicStore.BusinessLogic.Interfaces.Query;
 using SSW.MusicStore.Data.Entities;
 
 namespace SSW.MusicStore.API.Controllers

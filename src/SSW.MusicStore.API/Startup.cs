@@ -8,25 +8,14 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Serialization;
 using Serilog;
-
-using SSW.MusicStore.API.Services;
-
 using System.Threading.Tasks;
 
 using Autofac;
-using Autofac.Extensions.DependencyInjection;
-
 using SerilogWeb.Classic.Enrichers;
 
 using Microsoft.Extensions.PlatformAbstractions;
-using SSW.DataOnion.Core;
-using SSW.DataOnion.Core.Initializers;
-using SSW.DataOnion.DependencyResolution.Autofac;
-using SSW.DataOnion.Interfaces;
 using SSW.MusicStore.API.Filters;
 using SSW.MusicStore.API.Infrastructure.DI;
-using SSW.MusicStore.Data;
-using SSW.MusicStore.Data.Entities;
 using Swashbuckle.SwaggerGen;
 
 namespace SSW.MusicStore.API

@@ -7,6 +7,8 @@ using SSW.DataOnion.Core.Initializers;
 using SSW.DataOnion.DependencyResolution.Autofac;
 using SSW.DataOnion.Interfaces;
 using SSW.MusicStore.API.Services;
+using SSW.MusicStore.BusinessLogic.Command;
+using SSW.MusicStore.BusinessLogic.Interfaces.Command;
 using SSW.MusicStore.Data;
 using SSW.MusicStore.Data.Entities;
 
@@ -22,6 +24,8 @@ namespace SSW.MusicStore.API.Infrastructure.DI
             builder.RegisterType<AuthMessageSender>()
                 .As<IEmailSender>().InstancePerLifetimeScope();
             builder.RegisterAssemblyTypes(typeof(Startup).Assembly).AsImplementedInterfaces();
+            builder.RegisterAssemblyTypes(typeof (CartCommandService).Assembly, typeof (ICartCommandService).Assembly)
+                .AsImplementedInterfaces();
 
             var databaseInitializer = new MigrateToLatestVersion(new SampleDataSeeder());
             builder.AddDataOnion(configuration["Data:DefaultConnection:ConnectionString"], databaseInitializer);

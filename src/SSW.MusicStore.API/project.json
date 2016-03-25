@@ -26,8 +26,6 @@
     "Microsoft.AspNet.Cors": "6.0.0-rc1-final",
     "EntityFramework.MicrosoftSqlServer": "7.0.0-rc1-final",
     "Microsoft.Extensions.Configuration.UserSecrets": "1.0.0-rc1-final",
-    "SSW.MusicStore.Data.Interfaces": "1.0.0-*",
-    "SSW.MusicStore.DependencyResolution": "1.0.0-*",
     "EntityFramework.Core": "7.0.0-rc1-final",
     "SSW.MusicStore.Data": "1.0.0-*",
     "SSW.DataOnion.Core": "1.0.0-alpha-1",
@@ -35,7 +33,9 @@
     "Swashbuckle": "6.0.0-rc1-final",
     "Swashbuckle.SwaggerUi": "6.0.0-rc1-final",
     "Swashbuckle.SwaggerGen": "6.0.0-rc1-final",
-    "Swashbuckle.Core": "5.3.2"
+    "Swashbuckle.Core": "5.3.2",
+    "SSW.MusicStore.BusinessLogic.Interfaces": "1.0.0-*",
+    "SSW.MusicStore.BusinessLogic": "1.0.0-*"
   },
 
     "commands": {
