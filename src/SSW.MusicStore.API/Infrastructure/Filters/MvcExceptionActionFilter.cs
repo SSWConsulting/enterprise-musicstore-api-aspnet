@@ -11,6 +11,11 @@ namespace SSW.MusicStore.API.Filters
         {
             base.OnActionExecuted(context);
 
+            if (context.Exception == null)
+            {
+                return;
+            }
+
             var dbException = context.Exception as DbException;
             if (dbException != null)
             {

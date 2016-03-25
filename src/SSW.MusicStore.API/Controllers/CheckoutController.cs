@@ -29,9 +29,8 @@ namespace SSW.MusicStore.API.Controllers
         //
         // POST: /Checkout/AddressAndPayment
 
-        [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddressAndPayment([FromForm] Order order, CancellationToken requestAborted)
+        public async Task<IActionResult> AddressAndPayment([FromForm] Order order, CancellationToken requestAborted = default(CancellationToken))
         {
             if (!ModelState.IsValid)
             {
@@ -74,7 +73,6 @@ namespace SSW.MusicStore.API.Controllers
 
         //
         // GET: /Checkout/Complete
-
         public async Task<IActionResult> Complete(int id)
         {
             // Validate customer owns this order

@@ -4,9 +4,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Data.Entity;
+using SSW.DataOnion.Interfaces;
 using SSW.MusicStore.Data.Entities;
-
-using SSW.MusicStore.Data.Interfaces;
 
 namespace SSW.MusicStore.Data
 {

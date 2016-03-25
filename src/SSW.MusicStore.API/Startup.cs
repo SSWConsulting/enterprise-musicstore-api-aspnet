@@ -19,10 +19,15 @@ using Autofac.Extensions.DependencyInjection;
 using SerilogWeb.Classic.Enrichers;
 
 using Microsoft.Extensions.PlatformAbstractions;
+using SSW.DataOnion.Core;
+using SSW.DataOnion.Core.Initializers;
+using SSW.DataOnion.DependencyResolution.Autofac;
+using SSW.DataOnion.Interfaces;
 using SSW.MusicStore.API.Filters;
+using SSW.MusicStore.API.Infrastructure.DI;
 using SSW.MusicStore.Data;
-using SSW.MusicStore.Data.Initializers;
-using SSW.MusicStore.DependencyResolution;
+using SSW.MusicStore.Data.Entities;
+using Swashbuckle.SwaggerGen;
 
 namespace SSW.MusicStore.API
 {
@@ -45,6 +50,7 @@ namespace SSW.MusicStore.API
 
             builder.AddUserSecrets();
             builder.AddEnvironmentVariables();
+
             this.Configuration = builder.Build();
         }
 
@@ -69,23 +75,26 @@ namespace SSW.MusicStore.API
                         options.Filters.Add(new MvcValidateModelActionFilter());
                     });
 
-            var builder = new ContainerBuilder();
+            RegisterSwagger(services);
 
-            // Load web specific dependencies
-            builder.RegisterType<AuthMessageSender>()
-                .As<IEmailSender>().InstancePerLifetimeScope();
-            builder.RegisterAssemblyTypes(typeof(Startup).Assembly).AsImplementedInterfaces();
-
-            var databaseInitializer = new MigrateToLatestVersion(new SampleDataSeeder());
-            builder.RegisterModule(
-                new DataModule(this.Configuration["Data:DefaultConnection:ConnectionString"], databaseInitializer));
-
-            // Populate the container with services that were previously registered
-            builder.Populate(services);
-
-            var container = builder.Build();
+            var container = services.CreateAutofacContainer(this.Configuration);
 
             return container.Resolve<IServiceProvider>();
+        }
+
+        private static void RegisterSwagger(IServiceCollection services)
+        {
+            services.ConfigureSwaggerDocument(opt =>
+            {
+                opt.SingleApiVersion(new Info
+                {
+                    Version = "v1",
+                    Title = "Music Store API",
+                    Description = "API for SSW Music Store"
+                });
+            });
+            services.ConfigureSwaggerSchema(opt => { opt.DescribeAllEnumsAsStrings = true; });
+            services.AddSwaggerGen();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
@@ -148,8 +157,16 @@ namespace SSW.MusicStore.API
             });
 
             // Note: this line must be after the OAuth config above
-            app.UseMvc();
-
+            app.UseMvc(routes =>
+            {
+                routes.MapRoute(
+                    name: "default",
+                    template: "",
+                    defaults: new { controller = "Home", action = "Index" }
+                );
+            });
+            app.UseSwaggerUi();
+            app.UseSwaggerGen();
         }
     }
 }

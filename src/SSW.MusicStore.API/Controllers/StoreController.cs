@@ -4,12 +4,8 @@ using Microsoft.AspNet.Mvc;
 
 using System.Linq;
 using Microsoft.AspNet.Authorization;
-using Microsoft.Extensions.Logging;
-
 using Serilog;
 using SSW.MusicStore.API.Services.Query.Interfaces;
-
-using ILogger = Microsoft.Extensions.Logging.ILogger;
 using SSW.MusicStore.Data.Entities;
 
 namespace SSW.MusicStore.API.Controllers
@@ -22,13 +18,11 @@ namespace SSW.MusicStore.API.Controllers
         private readonly IAlbumQueryService _albumQueryService;
 
         public StoreController(
-            ILoggerFactory loggerfactory,
             IGenreQueryService genreQueryService,
             IAlbumQueryService albumQueryService)
         {
             _genreQueryService = genreQueryService;
             _albumQueryService = albumQueryService;
-            _logger = loggerfactory.CreateLogger(nameof(StoreController));
         }
 
         [HttpGet("genres")]

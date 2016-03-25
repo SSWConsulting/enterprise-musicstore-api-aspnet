@@ -1,5 +1,6 @@
-﻿using SSW.MusicStore.Data.Entities;
-using SSW.MusicStore.Data.Interfaces;
+﻿using SSW.DataOnion.Core;
+using SSW.DataOnion.Interfaces;
+using SSW.MusicStore.Data.Entities;
 
 namespace SSW.MusicStore.Data.Repositories
 {

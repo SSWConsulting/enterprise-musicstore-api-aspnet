@@ -1,8 +1,7 @@
 ﻿using System;
 
 using Microsoft.Extensions.DependencyInjection;
-
-using SSW.MusicStore.Data.Interfaces;
+using SSW.DataOnion.Interfaces;
 
 namespace SSW.MusicStore.Data
 {

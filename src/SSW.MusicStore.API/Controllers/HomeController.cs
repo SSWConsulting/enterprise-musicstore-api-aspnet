@@ -4,10 +4,9 @@ namespace SSW.MusicStore.API.Controllers
 {
     public class HomeController : Controller
     {
-
 		public  IActionResult Index()
         {     
-            return View();
+            return Redirect("~/swagger/ui");
         }
 
         public IActionResult Error()

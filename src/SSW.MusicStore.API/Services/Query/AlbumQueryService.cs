@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 using Autofac.Features.OwnedInstances;
 
 using Microsoft.Data.Entity;
+using SSW.DataOnion.Interfaces;
 using SSW.MusicStore.API.Services.Query.Interfaces;
 using SSW.MusicStore.Data.Entities;
-using SSW.MusicStore.Data.Interfaces;
 
 namespace SSW.MusicStore.API.Services.Query
 {

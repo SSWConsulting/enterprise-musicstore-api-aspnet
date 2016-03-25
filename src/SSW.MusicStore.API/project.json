@@ -29,7 +29,13 @@
     "SSW.MusicStore.Data.Interfaces": "1.0.0-*",
     "SSW.MusicStore.DependencyResolution": "1.0.0-*",
     "EntityFramework.Core": "7.0.0-rc1-final",
-    "SSW.MusicStore.Data": "1.0.0-*"
+    "SSW.MusicStore.Data": "1.0.0-*",
+    "SSW.DataOnion.Core": "1.0.0-alpha-1",
+    "SSW.DataOnion.DependencyResolution.Autofac": "1.0.0-alpha-1",
+    "Swashbuckle": "6.0.0-rc1-final",
+    "Swashbuckle.SwaggerUi": "6.0.0-rc1-final",
+    "Swashbuckle.SwaggerGen": "6.0.0-rc1-final",
+    "Swashbuckle.Core": "5.3.2"
   },
 
     "commands": {
