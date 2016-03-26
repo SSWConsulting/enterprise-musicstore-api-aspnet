@@ -1,41 +1,34 @@
 ﻿using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Mvc;
-using SSW.MusicStore.API.Models;
 using SSW.MusicStore.API.ViewModels;
 using Microsoft.AspNet.Authorization;
-using SSW.MusicStore.API.Services.Query;
+
 using System;
 
 using Microsoft.Extensions.Logging;
 
 using SSW.MusicStore.API.Helpers;
-using SSW.MusicStore.API.Services.Command.Interfaces;
-using SSW.MusicStore.API.Services.Query.Interfaces;
+using SSW.MusicStore.BusinessLogic.Interfaces.Command;
+using SSW.MusicStore.BusinessLogic.Interfaces.Query;
+using SSW.MusicStore.Data.Entities;
 
 namespace SSW.MusicStore.API.Controllers
 {
 	[Route("api")]
     public class ShoppingCartController : Controller
     {
-		[FromServices]
-		public MusicStoreContext DbContext { get; set; }
-
-		private readonly IServiceProvider _serviceProvider;
 		private readonly IAlbumQueryService _albumQueryService;
         private readonly ICartQueryService _cartQueryService;
         private readonly ICartCommandService _cartCommandService;
-        private readonly Microsoft.Extensions.Logging.ILogger _logger;
+        private readonly ILogger _logger;
 
 		public ShoppingCartController(
 			ILoggerFactory loggerfactory,
-			IServiceProvider serviceProvider,
 			IAlbumQueryService albumQueryService,
             ICartQueryService cartQueryService,
             ICartCommandService cartCommandService)
 		{
-			_serviceProvider = serviceProvider;
 			_albumQueryService = albumQueryService;
 		    _cartQueryService = cartQueryService;
 		    _cartCommandService = cartCommandService;
@@ -47,11 +40,9 @@ namespace SSW.MusicStore.API.Controllers
         /// </summary>
         /// <returns>Cart object including shopping cart items and totals</returns>
         [Authorize(ActiveAuthenticationSchemes = "Bearer")]
-        [HttpGet("cart")]
+        [HttpGet("cart/current")]
         public async Task<IActionResult> GetCurrentCart()
         {
-            _logger.LogInformation("GET request for 'api/cart'");
-
             // Get current cart for the logged in user
             var viewModel = await GetCart();
 
@@ -63,19 +54,16 @@ namespace SSW.MusicStore.API.Controllers
         /// Adds album to cart.
         /// </summary>
         /// <param name="id">The identifier.</param>
-        /// <param name="requestAborted">The request aborted.</param>
         /// <returns>Cart object including shopping cart items and totals</returns>
         [Authorize(ActiveAuthenticationSchemes = "Bearer")]
-        [HttpPost("cart/{id}")]
-        public async Task<IActionResult> AddToCart(int id, CancellationToken requestAborted)
+        [HttpPost("cart/add/{id}")]
+        public async Task<IActionResult> AddToCart(int id)
         {
-            _logger.LogInformation("POST request for 'api/{albumId}'", id);
-
             // Retrieve the album from the database
             var addedAlbum = await _albumQueryService.GetAlbumDetails(id);
 
             // Add it to the shopping cart
-            await _cartCommandService.AddToCart(GetCartId(), addedAlbum, requestAborted);
+            await _cartCommandService.AddToCart(GetCartId(), addedAlbum);
 
             // Return the cart json
             var viewModel = await GetCart();
@@ -88,29 +76,24 @@ namespace SSW.MusicStore.API.Controllers
 		/// </summary>
 		/// <returns>Order object </returns>
 		[Authorize(ActiveAuthenticationSchemes = "Bearer")]
-		[HttpGet("order")]
-		public IActionResult GetOrders(CancellationToken requestAborted)
+		[HttpGet("order/all")]
+		public IActionResult GetOrders()
 		{
-			_logger.LogInformation("GET request for 'api/order'");
-
 			// Add it to the order
-			var viewModel =  _cartQueryService.GetOrders(GetCartId(), requestAborted);
+			var viewModel =  _cartQueryService.GetOrders(GetCartId());
 
 			// Return the order json
 			return Json(viewModel);
 		}
 
-		/// <summary>Create order from cart.
-		/// </summary>
-		/// <param name="id">The identifier.</param>
-		/// <param name="requestAborted">The request aborted.</param>
-		/// <returns>Cart object including shopping cart items and totals</returns>
-		[Authorize(ActiveAuthenticationSchemes = "Bearer")]
-		[HttpPost("order")]
-		public async Task<IActionResult> CreateOrderFromCart([FromBody] OrderViewModel order, CancellationToken requestAborted)
+	    /// <summary>Create order from cart.
+	    /// </summary>
+	    /// <param name="order">Order to create</param>
+	    /// <returns>Cart object including shopping cart items and totals</returns>
+	    [Authorize(ActiveAuthenticationSchemes = "Bearer")]
+		[HttpPost("order/create")]
+		public async Task<IActionResult> CreateOrderFromCart([FromBody] OrderViewModel order)
 		{
-			_logger.LogInformation("POST request for 'api/order/'");
-
 			var addedOrder = new Order
 			{
 				Address = order.Address,
@@ -128,7 +111,7 @@ namespace SSW.MusicStore.API.Controllers
 			};
 
 			// Add it to the order
-			var viewModel = await _cartCommandService.CreateOrderFromCart(GetCartId(), addedOrder, requestAborted);
+			var viewModel = await _cartCommandService.CreateOrderFromCart(GetCartId(), addedOrder);
 
 			// Return the order json
 			return Json(viewModel);
@@ -137,16 +120,13 @@ namespace SSW.MusicStore.API.Controllers
 		/// <summary>
 		/// Empties the cart.
 		/// </summary>
-		/// <param name="requestAborted">The request aborted.</param>
 		/// <returns>Cart object including shopping cart items and totals</returns>
 		[Authorize(ActiveAuthenticationSchemes = "Bearer")]
         [HttpPost("cart/clear")]
-        public async Task<IActionResult> EmptyCart(CancellationToken requestAborted)
+        public async Task<IActionResult> EmptyCart()
         {
-            _logger.LogInformation("POST request for 'api/clear'");
-
             // Clear shopping cart
-            await this._cartCommandService.EmptyCart(GetCartId(), requestAborted);
+            await this._cartCommandService.EmptyCart(GetCartId());
 
             // Return the cart json
             var viewModel = await GetCart();
@@ -157,16 +137,13 @@ namespace SSW.MusicStore.API.Controllers
         /// Removes specified item from cart.
         /// </summary>
         /// <param name="id">The identifier.</param>
-        /// <param name="requestAborted">The request aborted.</param>
         /// <returns>Cart object including shopping cart items and totals</returns>
         [Authorize(ActiveAuthenticationSchemes = "Bearer")]
-        [HttpDelete("cart/{id}")]
-        public async Task<IActionResult> RemoveFromCart(int id, CancellationToken requestAborted)
+        [HttpDelete("cart/remove/{id}")]
+        public async Task<IActionResult> RemoveFromCart(int id)
         {
-            _logger.LogInformation("DELETE request for 'api/{cartItemId}'", id);
-
             // Remove item from the shopping cart
-            await _cartCommandService.RemoveCartItem(id, requestAborted);
+            await _cartCommandService.RemoveCartItem(id);
 
             // Return the cart json
             var viewModel = await GetCart();
@@ -191,6 +168,7 @@ namespace SSW.MusicStore.API.Controllers
                 }).ToList(),
                 CartTotal = cart.GetTotal()
             };
+
             return viewModel;
         }
 

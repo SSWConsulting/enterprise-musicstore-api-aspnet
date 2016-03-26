@@ -1,25 +1,22 @@
-﻿using Microsoft.AspNet.Authentication.JwtBearer;
+﻿using System;
+
+using Microsoft.AspNet.Authentication.JwtBearer;
 using Microsoft.AspNet.Builder;
-using Microsoft.AspNet.Diagnostics.Entity;
 using Microsoft.AspNet.Hosting;
-using Microsoft.Data.Entity;
-using Microsoft.Dnx.Runtime;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Serialization;
 using Serilog;
-using SSW.MusicStore.API.Models;
-using SSW.MusicStore.API.Services;
-using SSW.MusicStore.API.Services.Query;
 using System.Threading.Tasks;
 
+using Autofac;
 using SerilogWeb.Classic.Enrichers;
 
-using SSW.MusicStore.API.Services.Command;
-using SSW.MusicStore.API.Services.Command.Interfaces;
-using SSW.MusicStore.API.Services.Query.Interfaces;
 using Microsoft.Extensions.PlatformAbstractions;
+using SSW.MusicStore.API.Filters;
+using SSW.MusicStore.API.Infrastructure.DI;
+using Swashbuckle.SwaggerGen;
 
 namespace SSW.MusicStore.API
 {
@@ -42,32 +39,51 @@ namespace SSW.MusicStore.API
 
             builder.AddUserSecrets();
             builder.AddEnvironmentVariables();
+
             this.Configuration = builder.Build();
         }
 
         public IConfigurationRoot Configuration { get; set; }
 
-        public void ConfigureServices(IServiceCollection services)
+        public IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            services.AddEntityFramework()
-                .AddSqlServer()
-                .AddDbContext<MusicStoreContext>(options =>
-                options.UseSqlServer(Configuration["Data:DefaultConnection:ConnectionString"]));
-
             services.AddCors();
 
-            services.AddMvc().AddJsonOptions(
-                opt =>
-                {
-                    opt.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
-                });
+            services
+                .AddMvc()
+                .AddJsonOptions(
+                    options =>
+                        {
+                            options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+                        })
+                .AddMvcOptions(
+                    options =>
+                    {
+                        options.Filters.Add(new MvcLogActionFilter());
+                        options.Filters.Add(new MvcExceptionActionFilter());
+                        options.Filters.Add(new MvcValidateModelActionFilter());
+                    });
 
-            services.AddTransient<IEmailSender, AuthMessageSender>();
-            services.AddTransient<IDbContextFactory<MusicStoreContext>, DbContextFactory>();
-            services.AddTransient<IGenreQueryService, GenreQueryService>();
-            services.AddTransient<IAlbumQueryService, AlbumQueryService>();
-            services.AddTransient<ICartQueryService, CartQueryService>();
-            services.AddTransient<ICartCommandService, CartCommandService>();
+            RegisterSwagger(services);
+
+            var container = services.CreateAutofacContainer(this.Configuration);
+
+            return container.Resolve<IServiceProvider>();
+        }
+
+        private static void RegisterSwagger(IServiceCollection services)
+        {
+            services.ConfigureSwaggerDocument(opt =>
+            {
+                opt.SingleApiVersion(new Info
+                {
+                    Version = "v1",
+                    Title = "Music Store API",
+                    Description = "API for SSW Music Store"
+                });
+            });
+            services.ConfigureSwaggerSchema(opt => { opt.DescribeAllEnumsAsStrings = true; });
+            services.AddSwaggerGen();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
@@ -130,10 +146,16 @@ namespace SSW.MusicStore.API
             });
 
             // Note: this line must be after the OAuth config above
-            app.UseMvc();
-
-            //Slows web api - only do this on first run to popular db
-            SampleData.InitializeMusicStoreDatabaseAsync(app.ApplicationServices).Wait();
+            app.UseMvc(routes =>
+            {
+                routes.MapRoute(
+                    name: "default",
+                    template: "",
+                    defaults: new { controller = "Home", action = "Index" }
+                );
+            });
+            app.UseSwaggerUi();
+            app.UseSwaggerGen();
         }
     }
 }

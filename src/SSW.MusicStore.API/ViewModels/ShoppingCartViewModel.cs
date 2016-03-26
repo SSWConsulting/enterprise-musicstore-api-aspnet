@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using SSW.MusicStore.API.Models;
+using SSW.MusicStore.Data.Entities;
 
 namespace SSW.MusicStore.API.ViewModels
 {

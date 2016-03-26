@@ -27,7 +27,7 @@ namespace SSW.MusicStore.Data.Entities
 
         public virtual Genre Genre { get; set; }
         public virtual Artist Artist { get; set; }
-	    public virtual List<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
+	    public virtual ICollection<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
 
 		[Required]
 	    public DateTime Created { get; set; } = DateTime.UtcNow;

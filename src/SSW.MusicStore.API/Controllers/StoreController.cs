@@ -1,108 +1,71 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Common;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Mvc;
-using SSW.MusicStore.API.Models;
 
 using System.Linq;
-using System.Net;
 using Microsoft.AspNet.Authorization;
-using Microsoft.Extensions.Logging;
-
 using Serilog;
-using SSW.MusicStore.API.Services.Query;
-
-using ILogger = Microsoft.Extensions.Logging.ILogger;
+using SSW.MusicStore.BusinessLogic.Interfaces.Query;
+using SSW.MusicStore.Data.Entities;
 
 namespace SSW.MusicStore.API.Controllers
 {
-	//[Authorize]
-	[Route("api")]
-	public class StoreController : Controller
-	{
-		private readonly IServiceProvider _serviceProvider;
-		private readonly IGenreQueryService _genreQueryService;
-		private readonly IAlbumQueryService _albumQueryService;
-		private readonly ILogger _logger;
+    //[Authorize]
+    [Route("api")]
+    public class StoreController : Controller
+    {
+        private readonly IGenreQueryService _genreQueryService;
+        private readonly IAlbumQueryService _albumQueryService;
 
-		public StoreController(
-			ILoggerFactory loggerfactory, 
-			IServiceProvider serviceProvider,
-			IGenreQueryService genreQueryService,
-			IAlbumQueryService albumQueryService)
-		{
-			_serviceProvider = serviceProvider;
-			_genreQueryService = genreQueryService;
-			_albumQueryService = albumQueryService;
-			_logger = loggerfactory.CreateLogger(nameof(StoreController));
-		}
+        public StoreController(
+            IGenreQueryService genreQueryService,
+            IAlbumQueryService albumQueryService)
+        {
+            _genreQueryService = genreQueryService;
+            _albumQueryService = albumQueryService;
+        }
 
-		[HttpGet("genres")]
-		public async Task<JsonResult> Get()
-		{
-			_logger.LogInformation("Get all genres");
-			try
-			{
-				var results = await _genreQueryService.GetAllGenres();
-				return Json(results ?? null);
-			}
-			catch (DbException ex)
-			{
-				Log.Logger.Error("Failed to get genres", ex);
-				Response.StatusCode = (int)HttpStatusCode.BadRequest;
-				return Json("Error occurred finding Genres" + ex.Message);
-			}
-		}
+        [HttpGet("genres")]
+        public async Task<ActionResult> Get()
+        {
+            var results = await _genreQueryService.GetAllGenres();
+            if (results == null || !results.Any())
+            {
+                return HttpNotFound();
+            }
 
+            return Json(results);
+        }
 
+        [HttpGet("albums/{genre}")]
+        public async Task<ActionResult> Get(string genre)
+        {
+            var results = await _albumQueryService.GetByGenre(genre);
+            if (!results.Any())
+            {
+                return HttpNotFound();
+            }
 
-		[HttpGet("albums/{genre}")]
-		public async Task<JsonResult> Get(string genre)
-		{
-			_logger.LogInformation("Get {genre}", genre);
-			try
-			{
-				var results = await _albumQueryService.GetByGenre(genre);
-				return new JsonResult(results);
-
-			}
-			catch (DbException ex)
-			{
-				Log.Logger.Error(ex, "Failed to get albums by genre {genre}", genre);
-				Response.StatusCode = (int)HttpStatusCode.BadRequest;
-				return Json("Error occurred finding Genres" + ex.Message);
-			}
-		}
+            return new JsonResult(results);
+        }
 
 
-		[HttpGet("albums/details/{id}")]
-		public async Task<JsonResult> Details(int id)
-		{
-			_logger.LogInformation("Get album with id {id}", id);
-			try
-			{
-				var album = await _albumQueryService.GetAlbumDetails(id);
-				if (album != null) return new JsonResult(album);
+        [HttpGet("albums/details/{id}")]
+        public async Task<ActionResult> Details(int id)
+        {
+            var album = await _albumQueryService.GetAlbumDetails(id);
+            if (album != null) return new JsonResult(album);
 
-				Log.Logger.Warning("User tried to retrieve album with {id} which doesn't exist", id);
-				return Json(null);
-			}
-			catch (DbException ex)
-			{
-				Log.Logger.Error(ex, "Failed to get album with id {id}", id);
-				Response.StatusCode = (int)HttpStatusCode.BadRequest;
-				return Json("Error occurred finding Album" + ex.Message);
-			}
-		}
+            Log.Logger.Warning("User tried to retrieve album with {id} which doesn't exist", id);
+            return HttpNotFound();
+        }
 
-		[HttpGet("popular")]
-		public async Task<JsonResult> Popular()
-		{
-			_logger.LogInformation("Get top 6 popular albums");
-			var albums = await GetTopSellingAlbumsAsync(6);
-			return Json(albums);
-		}
+        [HttpGet("popular")]
+        public async Task<JsonResult> Popular()
+        {
+            var albums = await GetTopSellingAlbumsAsync(6);
+            return Json(albums);
+        }
 
         [HttpGet]
         [Authorize(ActiveAuthenticationSchemes = "Bearer")]
@@ -117,8 +80,8 @@ namespace SSW.MusicStore.API.Controllers
         }
 
         private async Task<IEnumerable<Album>> GetTopSellingAlbumsAsync(int count)
-		{
-			return await _albumQueryService.GetTopSellingAlbums(count);
-		}
-	}
+        {
+            return await _albumQueryService.GetTopSellingAlbums(count);
+        }
+    }
 }

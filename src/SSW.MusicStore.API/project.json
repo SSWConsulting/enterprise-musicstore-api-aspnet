@@ -3,30 +3,40 @@
     "userSecretsId": "aspnet5-SSW.MusicStore.API-c0c9a70c-e26a-45d0-a456-0665948c00bd",
     "version": "1.0.0-*",
 
-	"dependencies": {
-		"EntityFramework.Commands": "7.0.0-rc1-final",
-		"Microsoft.AspNet.Authentication.JwtBearer": "1.0.0-rc1-final",
-		"Microsoft.AspNet.Diagnostics": "1.0.0-rc1-final",
-		"Microsoft.AspNet.Diagnostics.Entity": "7.0.0-rc1-final",
-		"Microsoft.AspNet.Identity.EntityFramework": "3.0.0-rc1-final",
-		"Microsoft.AspNet.IISPlatformHandler": "1.0.0-rc1-final",
-		"Microsoft.AspNet.Mvc": "6.0.0-rc1-final",
-		"Microsoft.AspNet.Mvc.TagHelpers": "6.0.0-rc1-final",
-		"Microsoft.AspNet.Mvc.WebApiCompatShim": "6.0.0-rc1-final",
-		"Microsoft.AspNet.Server.Kestrel": "1.0.0-rc1-final",
-		"Microsoft.AspNet.StaticFiles": "1.0.0-rc1-final",
-		"Microsoft.AspNet.Tooling.Razor": "1.0.0-rc1-final",
-		"Microsoft.Extensions.Caching.Abstractions": "1.0.0-rc1-final",
-		"Microsoft.Extensions.Configuration.Json": "1.0.0-rc1-final",
-		"Microsoft.Extensions.Logging": "1.0.0-rc1-final",
-		"Microsoft.Extensions.Logging.Console": "1.0.0-rc1-final",
-		"Microsoft.Extensions.Logging.Debug": "1.0.0-rc1-final",
-		"Serilog.Framework.Logging": "1.0.0-rc1-final-10071",
-		"Serilog.Sinks.Seq": "1.5.17",
-		"Microsoft.AspNet.Cors": "6.0.0-rc1-final",
-		"EntityFramework.MicrosoftSqlServer": "7.0.0-rc1-final",
-		"Microsoft.Extensions.Configuration.UserSecrets": "1.0.0-rc1-final"
-	},
+  "dependencies": {
+    "EntityFramework.Commands": "7.0.0-rc1-final",
+    "Microsoft.AspNet.Authentication.JwtBearer": "1.0.0-rc1-final",
+    "Microsoft.AspNet.Diagnostics": "1.0.0-rc1-final",
+    "Microsoft.AspNet.Diagnostics.Entity": "7.0.0-rc1-final",
+    "Microsoft.AspNet.Identity.EntityFramework": "3.0.0-rc1-final",
+    "Microsoft.AspNet.IISPlatformHandler": "1.0.0-rc1-final",
+    "Microsoft.AspNet.Mvc": "6.0.0-rc1-final",
+    "Microsoft.AspNet.Mvc.TagHelpers": "6.0.0-rc1-final",
+    "Microsoft.AspNet.Mvc.WebApiCompatShim": "6.0.0-rc1-final",
+    "Microsoft.AspNet.Server.Kestrel": "1.0.0-rc1-final",
+    "Microsoft.AspNet.StaticFiles": "1.0.0-rc1-final",
+    "Microsoft.AspNet.Tooling.Razor": "1.0.0-rc1-final",
+    "Microsoft.Extensions.Caching.Abstractions": "1.0.0-rc1-final",
+    "Microsoft.Extensions.Configuration.Json": "1.0.0-rc1-final",
+    "Microsoft.Extensions.Logging": "1.0.0-rc1-final",
+    "Microsoft.Extensions.Logging.Console": "1.0.0-rc1-final",
+    "Microsoft.Extensions.Logging.Debug": "1.0.0-rc1-final",
+    "Serilog.Framework.Logging": "1.0.0-rc1-final-10071",
+    "Serilog.Sinks.Seq": "1.5.17",
+    "Microsoft.AspNet.Cors": "6.0.0-rc1-final",
+    "EntityFramework.MicrosoftSqlServer": "7.0.0-rc1-final",
+    "Microsoft.Extensions.Configuration.UserSecrets": "1.0.0-rc1-final",
+    "EntityFramework.Core": "7.0.0-rc1-final",
+    "SSW.MusicStore.Data": "1.0.0-*",
+    "SSW.DataOnion.Core": "1.0.0-alpha-3",
+    "SSW.DataOnion.DependencyResolution.Autofac": "1.0.0-alpha-1",
+    "Swashbuckle": "6.0.0-rc1-final",
+    "Swashbuckle.SwaggerUi": "6.0.0-rc1-final",
+    "Swashbuckle.SwaggerGen": "6.0.0-rc1-final",
+    "Swashbuckle.Core": "5.3.2",
+    "SSW.MusicStore.BusinessLogic.Interfaces": "1.0.0-*",
+    "SSW.MusicStore.BusinessLogic": "1.0.0-*"
+  },
 
     "commands": {
         "web": "Microsoft.AspNet.Server.Kestrel",
@@ -35,16 +45,18 @@
 
     "frameworks": {
         "dnx451": {
-            "dependencies": {
-                "Serilog": "1.5.12",
-                "SerilogWeb.Classic": "2.0.6"
-            }
+          "dependencies": {
+            "Serilog": "1.5.12",
+            "Autofac": "4.0.0-rc1-177",
+            "Autofac.Extensions.DependencyInjection": "4.0.0-rc1-177",
+            "SerilogWeb.Classic": "2.0.6"
+          }
         }
     },
 
-    "exclude": [
-			"wwwroot"
-    ],
+  "exclude": [
+    "wwwroot"
+  ],
     "publishExclude": [
         "**.user",
         "**.vspscc"
