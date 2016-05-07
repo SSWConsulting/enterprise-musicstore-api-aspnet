@@ -35,7 +35,9 @@
     "Swashbuckle.SwaggerGen": "6.0.0-rc1-final",
     "Swashbuckle.Core": "5.3.2",
     "SSW.MusicStore.BusinessLogic.Interfaces": "1.0.0-*",
-    "SSW.MusicStore.BusinessLogic": "1.0.0-*"
+    "SSW.MusicStore.BusinessLogic": "1.0.0-*",
+    "Mindscape.Raygun4Net.AspNetCore": "0.1.0-beta1",
+    "Microsoft.ApplicationInsights.AspNet": "1.0.0-rc1-update4"
   },
 
     "commands": {

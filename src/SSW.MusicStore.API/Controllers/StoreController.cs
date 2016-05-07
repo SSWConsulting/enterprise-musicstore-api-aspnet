@@ -1,9 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Mvc;
 
 using System.Linq;
 using Microsoft.AspNet.Authorization;
+using Mindscape.Raygun4Net;
+using Mindscape.Raygun4Net.AspNetCore;
 using Serilog;
 using SSW.MusicStore.BusinessLogic.Interfaces.Query;
 using SSW.MusicStore.Data.Entities;
@@ -46,7 +49,7 @@ namespace SSW.MusicStore.API.Controllers
                 return HttpNotFound();
             }
 
-            return new JsonResult(results);
+            return Json(results);
         }
 
 
