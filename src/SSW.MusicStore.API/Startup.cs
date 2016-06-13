@@ -18,6 +18,8 @@ using SSW.MusicStore.API.Filters;
 using SSW.MusicStore.API.Infrastructure.DI;
 using Swashbuckle.SwaggerGen;
 
+using Mindscape.Raygun4Net.AspNetCore;
+
 namespace SSW.MusicStore.API
 {
     public class Startup
@@ -60,9 +62,12 @@ namespace SSW.MusicStore.API
                     options =>
                     {
                         options.Filters.Add(new MvcLogActionFilter());
-                        options.Filters.Add(new MvcExceptionActionFilter());
+                        options.Filters.Add(new MvcExceptionActionFilter(this.Configuration));
                         options.Filters.Add(new MvcValidateModelActionFilter());
                     });
+
+            services.AddRaygun(this.Configuration);
+            services.AddApplicationInsightsTelemetry(this.Configuration);
 
             RegisterSwagger(services);
 
@@ -156,6 +161,11 @@ namespace SSW.MusicStore.API
             });
             app.UseSwaggerUi();
             app.UseSwaggerGen();
+
+            app.UseRaygun();
+
+            app.UseApplicationInsightsRequestTelemetry();
+            app.UseApplicationInsightsExceptionTelemetry();
         }
     }
 }
