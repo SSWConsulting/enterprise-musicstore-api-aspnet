@@ -1,8 +1,8 @@
 ﻿using System;
 
-using Microsoft.AspNet.Authentication.JwtBearer;
-using Microsoft.AspNet.Builder;
-using Microsoft.AspNet.Hosting;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -12,23 +12,20 @@ using System.Threading.Tasks;
 
 using Autofac;
 using SerilogWeb.Classic.Enrichers;
-
-using Microsoft.Extensions.PlatformAbstractions;
 using SSW.MusicStore.API.Filters;
 using SSW.MusicStore.API.Infrastructure.DI;
-using Swashbuckle.SwaggerGen;
-
-using Mindscape.Raygun4Net.AspNetCore;
+using SSW.MusicStore.API.Infrastructure.Filters;
+using Swashbuckle.Swagger.Model;
 
 namespace SSW.MusicStore.API
 {
     public class Startup
     {
-        public Startup(IHostingEnvironment env, IApplicationEnvironment appEnv)
+        public Startup(IHostingEnvironment env)
         {
 
             var builder = new ConfigurationBuilder()
-                .SetBasePath(appEnv.ApplicationBasePath);
+                .SetBasePath(env.ContentRootPath);
 
             if (env.IsDevelopment())
             {
@@ -66,7 +63,9 @@ namespace SSW.MusicStore.API
                         options.Filters.Add(new MvcValidateModelActionFilter());
                     });
 
-            services.AddRaygun(this.Configuration);
+            //TODO: update this once Raygun supports ASPNET CORE RTM
+            //services.AddRaygun(this.Configuration);
+
             services.AddApplicationInsightsTelemetry(this.Configuration);
 
             RegisterSwagger(services);
@@ -78,7 +77,7 @@ namespace SSW.MusicStore.API
 
         private static void RegisterSwagger(IServiceCollection services)
         {
-            services.ConfigureSwaggerDocument(opt =>
+            services.ConfigureSwaggerGen(opt =>
             {
                 opt.SingleApiVersion(new Info
                 {
@@ -86,8 +85,10 @@ namespace SSW.MusicStore.API
                     Title = "Music Store API",
                     Description = "API for SSW Music Store"
                 });
+
+                opt.DescribeAllEnumsAsStrings();
             });
-            services.ConfigureSwaggerSchema(opt => { opt.DescribeAllEnumsAsStrings = true; });
+
             services.AddSwaggerGen();
         }
 
@@ -95,13 +96,11 @@ namespace SSW.MusicStore.API
         {
             var config =
                 new LoggerConfiguration()
-                    .WriteTo.ColoredConsole()
                     .WriteTo.Seq(serverUrl: Configuration["Seq:Url"], apiKey: Configuration["Seq:Key"])
                     .Enrich.WithProperty("ApplicationName", "Music Store")
                     .Enrich.With(new HttpRequestIdEnricher());
             Log.Logger = config.CreateLogger();
-
-            loggerFactory.MinimumLevel = LogLevel.Information;
+            
             loggerFactory.AddSerilog();
             loggerFactory.AddDebug();
 
@@ -125,30 +124,28 @@ namespace SSW.MusicStore.API
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseDatabaseErrorPage();
             }
             else
             {
                 app.UseExceptionHandler("/Home/Error");
             }
 
-            app.UseIISPlatformHandler();
-
             app.UseStaticFiles();
 
-            app.UseJwtBearerAuthentication(options =>
+            var jwtOptions = new JwtBearerOptions
             {
-                options.Audience = Configuration["Auth0:ClientId"];
-                options.Authority = $"https://{Configuration["Auth0:Domain"]}";
-                options.Events = new JwtBearerEvents
+                Audience = Configuration["Auth0:ClientId"],
+                Authority = $"https://{Configuration["Auth0:Domain"]}",
+                Events = new JwtBearerEvents
                 {
                     OnAuthenticationFailed = context =>
                     {
                         Log.Logger.Error("Authentication failed.", context.Exception);
                         return Task.FromResult(0);
                     }
-                };
-            });
+                }
+            };
+            app.UseJwtBearerAuthentication(jwtOptions);
 
             // Note: this line must be after the OAuth config above
             app.UseMvc(routes =>
@@ -160,9 +157,10 @@ namespace SSW.MusicStore.API
                 );
             });
             app.UseSwaggerUi();
-            app.UseSwaggerGen();
+            app.UseSwagger();
 
-            app.UseRaygun();
+            //TODO: update this once Raygun supports ASPNET CORE RTM
+            //app.UseRaygun();
 
             app.UseApplicationInsightsRequestTelemetry();
             app.UseApplicationInsightsExceptionTelemetry();

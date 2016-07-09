@@ -11,6 +11,7 @@ using SSW.MusicStore.BusinessLogic.Command;
 using SSW.MusicStore.BusinessLogic.Interfaces.Command;
 using SSW.MusicStore.Data;
 using SSW.MusicStore.Data.Entities;
+using System.Reflection;
 
 namespace SSW.MusicStore.API.Infrastructure.DI
 {
@@ -23,12 +24,12 @@ namespace SSW.MusicStore.API.Infrastructure.DI
             // Load web specific dependencies
             builder.RegisterType<AuthMessageSender>()
                 .As<IEmailSender>().InstancePerLifetimeScope();
-            builder.RegisterAssemblyTypes(typeof(Startup).Assembly).AsImplementedInterfaces();
-            builder.RegisterAssemblyTypes(typeof (CartCommandService).Assembly, typeof (ICartCommandService).Assembly)
+            builder.RegisterAssemblyTypes(typeof(Startup).GetTypeInfo().Assembly).AsImplementedInterfaces();
+            builder.RegisterAssemblyTypes(typeof (CartCommandService).GetTypeInfo().Assembly, typeof (ICartCommandService).GetTypeInfo().Assembly)
                 .AsImplementedInterfaces();
 
             var databaseInitializer = new MigrateToLatestVersion(new SampleDataSeeder());
-            builder.AddDataOnion(configuration["Data:DefaultConnection:ConnectionString"], databaseInitializer);
+            builder.AddDataOnion(new DbContextConfig(configuration["Data:DefaultConnection:ConnectionString"], typeof(MusicStoreContext), databaseInitializer));
 
             // Populate the container with services that were previously registered
             builder.Populate(services);

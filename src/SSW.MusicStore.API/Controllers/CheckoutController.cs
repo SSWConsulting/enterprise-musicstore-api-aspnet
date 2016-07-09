@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Linq;
-using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNet.Authorization;
-using Microsoft.AspNet.Mvc;
-using Microsoft.Data.Entity;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using SSW.MusicStore.Data;
 using SSW.MusicStore.Data.Entities;
+using SSW.DataOnion.Interfaces;
 
 namespace SSW.MusicStore.API.Controllers
 {
@@ -16,8 +16,12 @@ namespace SSW.MusicStore.API.Controllers
     {
         private const string PromoCode = "FREE";
 
-        [FromServices]
-        public MusicStoreContext DbContext { get; set; }
+        private readonly IDbContextScopeFactory dbContextScopeFactory;
+
+        public CheckoutController(IDbContextScopeFactory dbContextScopeFactory)
+        {
+            this.dbContextScopeFactory = dbContextScopeFactory;
+        }
 
         //
         // GET: /Checkout/
@@ -48,18 +52,19 @@ namespace SSW.MusicStore.API.Controllers
                 }
                 else
                 {
-                    order.Username = HttpContext.User.GetUserName();
+                    order.Username = HttpContext.User.Identity.Name;
                     order.OrderDate = DateTime.Now;
 
                     //Add the Order
-                    DbContext.Orders.Add(order);
+                    var dbContext = this.dbContextScopeFactory.Create().DbContexts.Get<MusicStoreContext>();
+                    dbContext.Orders.Add(order);
 
                     //Process the order
                     //var cart = ShoppingCart.GetCart(DbContext, HttpContext);
                     //await cart.CreateOrder(order);
 
                     // Save all changes
-                    await DbContext.SaveChangesAsync(requestAborted);
+                    await dbContext.SaveChangesAsync(requestAborted);
 
                     return RedirectToAction("Complete", new { id = order.OrderId });
                 }
@@ -75,10 +80,11 @@ namespace SSW.MusicStore.API.Controllers
         // GET: /Checkout/Complete
         public async Task<IActionResult> Complete(int id)
         {
+            var dbContext = this.dbContextScopeFactory.Create().DbContexts.Get<MusicStoreContext>();
             // Validate customer owns this order
-            bool isValid = await DbContext.Orders.AnyAsync(
+            bool isValid = await dbContext.Orders.AnyAsync(
                 o => o.OrderId == id &&
-                o.Username == HttpContext.User.GetUserName());
+                o.Username == HttpContext.User.Identity.Name);
 
             if (isValid)
             {

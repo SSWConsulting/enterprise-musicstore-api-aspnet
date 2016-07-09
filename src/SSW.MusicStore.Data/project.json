@@ -1,29 +1,32 @@
 {
-    "version": "1.0.0-*",
-    "description": "SSW.MusicStore.Data Class Library",
-    "authors": [ "Duncan Hunter" ],
-    "tags": [ "" ],
-    "projectUrl": "",
-    "licenseUrl": "",
+  "version": "1.0.0-*",
+  "description": "SSW.MusicStore.Data Class Library",
+  "authors": [ "Duncan Hunter" ],
   "dependencies": {
-    "EntityFramework.Commands": "7.0.0-rc1-final",
-    "EntityFramework.MicrosoftSqlServer": "7.0.0-rc1-final",
-    "Microsoft.AspNet.Identity.EntityFramework": "3.0.0-rc1-final",
-    "EntityFramework.Relational": "7.0.0-rc1-final",
-    "EntityFramework.Core": "7.0.0-rc1-final",
-    "Microsoft.Extensions.Configuration.Json": "1.0.0-rc1-final",
-    "SSW.DataOnion.Core": "1.0.0-alpha-3"
+    "Microsoft.EntityFrameworkCore.SqlServer": "1.0.0",
+    "Microsoft.AspNetCore.Identity.EntityFrameworkCore": "1.0.0",
+    "Microsoft.EntityFrameworkCore.Relational": "1.0.0",
+    "Microsoft.Extensions.Configuration.Json": "1.0.0",
+    "SSW.DataOnion.Core": "1.0.0",
+    "Serilog": "2.0.0",
+    "Microsoft.EntityFrameworkCore.Tools": "1.0.0-preview2-final"
   },
 
-    "commands": {
-        "ef": "EntityFramework.Commands"
-    },
-
+  "buildOptions": {
+    "emitEntryPoint": false
+  },
   "frameworks": {
-    "dnx451": {
-      "dependencies": {
-        "Serilog": "1.5.12"
-      }
+    "net461": {
+      "imports": [ "portable-net451+win8" ]
+    }
+  },
+  "tools": {
+    "Microsoft.EntityFrameworkCore.Tools": {
+      "version": "1.0.0-preview2-final",
+      "imports": [
+        "portable-net45+win8+dnxcore50",
+        "portable-net45+win8"
+      ]
     }
   }
 }

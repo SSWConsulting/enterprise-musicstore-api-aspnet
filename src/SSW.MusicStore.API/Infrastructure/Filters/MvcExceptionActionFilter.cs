@@ -1,13 +1,9 @@
-﻿using System;
-using System.Data.Common;
-using System.Threading.Tasks;
+﻿using System.Data.Common;
 using System.Web.Http;
-using Microsoft.AspNet.Mvc;
-using Microsoft.AspNet.Mvc.Filters;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.PlatformAbstractions;
 using Mindscape.Raygun4Net;
-using Mindscape.Raygun4Net.AspNetCore;
 
 namespace SSW.MusicStore.API.Filters
 {
@@ -39,15 +35,17 @@ namespace SSW.MusicStore.API.Filters
                 context.Result = new InternalServerErrorResult();
             }
 
-            var apiKey = this.config.Get<string>("RaygunSettings:ApiKey");
+            var apiKey = this.config["RaygunSettings:ApiKey"];
             if (string.IsNullOrEmpty(apiKey))
             {
                 return;
             }
 
-            var settings = new RaygunSettings { ApiKey = apiKey };
-            var client = new RaygunAspNetCoreClient(settings);
-            client.Send(context.Exception).Wait();
+            //TODO: update this once Raygun supports ASPNET CORE RTM
+            //var settings = new RaygunSettings { ApiKey = apiKey };
+
+            //var client = new RaygunClient(settings);
+            //client.Send(context.Exception);
         }
     }
 }

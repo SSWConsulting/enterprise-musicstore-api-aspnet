@@ -2,11 +2,8 @@
   "version": "1.0.0-*",
   "description": "SSW.MusicStore.BusinessLogic.Interfaces Class Library",
   "authors": [ "igor" ],
-  "tags": [ "" ],
-  "projectUrl": "",
-  "licenseUrl": "",
   "frameworks": {
-    "dnx451": { }
+    "net461": {}
   },
   "dependencies": {
     "SSW.MusicStore.Data": "1.0.0-*"

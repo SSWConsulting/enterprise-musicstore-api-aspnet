@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Autofac.Features.OwnedInstances;
-using Microsoft.Data.Entity;
+using Microsoft.EntityFrameworkCore;
 using SSW.DataOnion.Interfaces;
 using SSW.MusicStore.BusinessLogic.Interfaces.Query;
 using SSW.MusicStore.Data.Entities;
