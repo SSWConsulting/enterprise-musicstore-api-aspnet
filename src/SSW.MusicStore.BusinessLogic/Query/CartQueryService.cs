@@ -27,7 +27,7 @@ namespace SSW.MusicStore.BusinessLogic.Query
                 var cart =
                     await
                         unitOfWork.Value.Repository<Cart>()
-                            .Get(c => c.CartId == userId, c => c.CartItems)
+                            .Get(c => c.CartId == userId)
                             .SingleOrDefaultAsync(cancellationToken);
                 if (cart == null)
                 {
@@ -40,13 +40,15 @@ namespace SSW.MusicStore.BusinessLogic.Query
                 {
                     // HACK: .Include(c => c.CartItems.Select(ci => ci.Album)) EF7 doesn't support lazy loading yet and nested includes
                     // using a loop
+                    cart.CartItems = await unitOfWork.Value.Repository<CartItem>()
+                        .Get(x => x.CartId == cart.CartId, x => x.Album)
+                        .ToListAsync(cancellationToken);
+
                     foreach (var cartItem in cart.CartItems)
                     {
-                        cartItem.Album =
-                            await
-                                unitOfWork.Value.Repository<Album>()
-                                    .Get()
-                                    .SingleOrDefaultAsync(a => a.AlbumId == cartItem.AlbumId, cancellationToken);
+                        cartItem.Album = await unitOfWork.Value.Repository<Album>()
+                                    .Get(a => a.AlbumId == cartItem.AlbumId)
+                                    .SingleOrDefaultAsync(cancellationToken);
                     }
                 }
 

@@ -11,7 +11,7 @@ namespace SSW.MusicStore.Data
 {
 	public class SampleDataSeeder : IDataSeeder
 	{
-		const string ImgUrl = "~/Images/placeholder.png";
+		const string ImgUrl = "/assets/img/placeholder.png";
 
 	    public void Seed<TDbContext>(TDbContext dbContext) where TDbContext : DbContext
 	    {

@@ -77,10 +77,10 @@ namespace SSW.MusicStore.API.Controllers
 		/// <returns>Order object </returns>
 		[Authorize(ActiveAuthenticationSchemes = "Bearer")]
 		[HttpGet("order/all")]
-		public IActionResult GetOrders()
+		public async Task<IActionResult> GetOrders()
 		{
 			// Add it to the order
-			var viewModel =  _cartQueryService.GetOrders(GetCartId());
+			var viewModel = await _cartQueryService.GetOrders(GetCartId());
 
 			// Return the order json
 			return Json(viewModel);

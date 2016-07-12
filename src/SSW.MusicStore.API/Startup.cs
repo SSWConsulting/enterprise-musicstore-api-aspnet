@@ -32,7 +32,7 @@ namespace SSW.MusicStore.API
 
             if (env.IsDevelopment())
             {
-                builder.AddJsonFile("appsettings.json").AddJsonFile("privatesettings.json");
+                builder.AddJsonFile("appsettings.json").AddJsonFile("privatesettings.json", optional: true);
             }
             else
             {
