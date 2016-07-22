@@ -19,6 +19,7 @@ using SSW.MusicStore.API.Infrastructure.DI;
 using Swashbuckle.SwaggerGen;
 
 using Mindscape.Raygun4Net.AspNetCore;
+using SSW.MusicStore.API.Settings;
 
 namespace SSW.MusicStore.API
 {
@@ -49,6 +50,8 @@ namespace SSW.MusicStore.API
 
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
+            services.Configure<AppSettings>(options => Configuration.Bind(options));
+
             services.AddCors();
 
             services

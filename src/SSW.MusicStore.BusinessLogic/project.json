@@ -1,4 +1,4 @@
-﻿{
+{
   "version": "1.0.0-*",
   "description": "SSW.MusicStore.BusinessLogic Class Library",
   "authors": [ "igor" ],
@@ -17,6 +17,7 @@
   "dependencies": {
     "EntityFramework.Core": "7.0.0-rc1-final",
     "SSW.MusicStore.BusinessLogic.Interfaces": "1.0.0-*",
-    "SSW.MusicStore.Data": "1.0.0-*"
+    "SSW.MusicStore.Data": "1.0.0-*",
+    "Stripe.net": "6.3.5"
   }
 }
