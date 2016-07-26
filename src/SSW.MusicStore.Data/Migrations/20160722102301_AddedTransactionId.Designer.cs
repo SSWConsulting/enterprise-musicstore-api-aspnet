@@ -8,9 +8,10 @@ using SSW.MusicStore.Data;
 namespace SSW.MusicStore.Data.Migrations
 {
     [DbContext(typeof(MusicStoreContext))]
-    partial class MusicStoreContextModelSnapshot : ModelSnapshot
+    [Migration("20160722102301_AddedTransactionId")]
+    partial class AddedTransactionId
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "7.0.0-rc1-16348")

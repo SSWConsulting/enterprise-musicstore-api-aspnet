@@ -35,6 +35,7 @@ namespace SSW.MusicStore.API.Infrastructure.DI
 
             builder.RegisterType<BaseRepository<Album, MusicStoreContext>>().As<IRepository<Album>>();
             builder.RegisterType<BaseRepository<Artist, MusicStoreContext>>().As<IRepository<Artist>>();
+            builder.RegisterType<BaseRepository<Cart, MusicStoreContext>>().As<IRepository<Cart>>();
             builder.RegisterType<BaseRepository<CartItem, MusicStoreContext>>().As<IRepository<CartItem>>();
             builder.RegisterType<BaseRepository<Genre, MusicStoreContext>>().As<IRepository<Genre>>();
             builder.RegisterType<BaseRepository<Order, MusicStoreContext>>().As<IRepository<Order>>();

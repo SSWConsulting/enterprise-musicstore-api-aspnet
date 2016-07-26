@@ -6,6 +6,7 @@ using Microsoft.Data.Entity;
 using SSW.DataOnion.Interfaces;
 using SSW.MusicStore.BusinessLogic.Interfaces.Command;
 using SSW.MusicStore.Data.Entities;
+using Stripe;
 
 namespace SSW.MusicStore.BusinessLogic.Command
 {
@@ -35,7 +36,27 @@ namespace SSW.MusicStore.BusinessLogic.Command
             }
         }
 
-        public async Task<int> CreateOrderFromCart(string cartId, Order order, CancellationToken cancellationToken = new CancellationToken())
+        public async Task<string> ExecuteTransaction(string stripeToken, string stripeSecretKey, int amount)
+        {
+            var chargeOptions = new StripeChargeCreateOptions()
+            {
+                Amount = amount,
+                Currency = "AUD",
+                SourceTokenOrExistingSourceId = stripeToken
+            };
+
+            var client = new StripeChargeService(stripeSecretKey);
+            var result = await client.CreateAsync(chargeOptions);
+
+            if (!result.Paid)
+            {
+                throw new Exception(result.FailureMessage);
+            }
+
+            return result.Id;
+        }
+
+        public async Task<int> CreateOrderFromCart(string cartId, Order order, string stripeToken, string stripeSecretKey, CancellationToken cancellationToken = new CancellationToken())
         {
             Serilog.Log.Logger.Debug($"{nameof(this.EmptyCart)} for cart id '{cartId}'");
             using (var unitOfWork = this.unitOfWorkFunc())
@@ -76,7 +97,8 @@ namespace SSW.MusicStore.BusinessLogic.Command
                 // Set the order's total to the orderTotal count
                 order.Total = orderTotal;
 
-
+                order.TransactionId = await ExecuteTransaction(stripeToken, stripeSecretKey, Convert.ToInt32(orderTotal*100));
+                
                 // Empty the shopping cart
                 var cartItemsToClear = await cartItemsRepository.Get(cart => cart.CartId == cartId).ToArrayAsync(cancellationToken);
                 cartItemsRepository.DeleteRange(cartItemsToClear);

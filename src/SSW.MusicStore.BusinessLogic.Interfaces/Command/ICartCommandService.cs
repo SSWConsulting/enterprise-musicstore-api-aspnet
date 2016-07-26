@@ -19,9 +19,11 @@ namespace SSW.MusicStore.BusinessLogic.Interfaces.Command
         /// </summary>
         /// <param name="cartId">The cart identifier.</param>
         /// <param name="order">The order.</param>
+        /// <param name="stripeToken">The token returned by Stripe Checkout</param>
+        /// <param name="stripeSecretKey">Your Stripe Secret Key (from API Keys)</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>OrderId as the confirmation numbe</returns>
-        Task<int> CreateOrderFromCart(string cartId, Order order, CancellationToken cancellationToken = default(CancellationToken));
+        Task<int> CreateOrderFromCart(string cartId, Order order, string stripeToken, string stripeSecretKey, CancellationToken cancellationToken = new CancellationToken());
 
         /// <summary>
         /// Adds album to existing cart.
@@ -39,5 +41,7 @@ namespace SSW.MusicStore.BusinessLogic.Interfaces.Command
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Number of items left in the cart</returns>
         Task<int> RemoveCartItem(int cartItemId, CancellationToken cancellationToken = default(CancellationToken));
+
+        Task<string> ExecuteTransaction(string stripeToken, string stripeSecretKey, int amount);
     }
 }

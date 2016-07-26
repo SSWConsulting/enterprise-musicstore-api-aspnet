@@ -7,8 +7,9 @@ using Microsoft.AspNet.Authorization;
 using System;
 
 using Microsoft.Extensions.Logging;
-
+using Microsoft.Extensions.OptionsModel;
 using SSW.MusicStore.API.Helpers;
+using SSW.MusicStore.API.Settings;
 using SSW.MusicStore.BusinessLogic.Interfaces.Command;
 using SSW.MusicStore.BusinessLogic.Interfaces.Query;
 using SSW.MusicStore.Data.Entities;
@@ -22,17 +23,20 @@ namespace SSW.MusicStore.API.Controllers
         private readonly ICartQueryService _cartQueryService;
         private readonly ICartCommandService _cartCommandService;
         private readonly ILogger _logger;
+        private readonly AppSettings _appSettings;
 
 		public ShoppingCartController(
 			ILoggerFactory loggerfactory,
 			IAlbumQueryService albumQueryService,
             ICartQueryService cartQueryService,
-            ICartCommandService cartCommandService)
+            ICartCommandService cartCommandService,
+            IOptions<AppSettings> appSettingsOptions)
 		{
 			_albumQueryService = albumQueryService;
 		    _cartQueryService = cartQueryService;
 		    _cartCommandService = cartCommandService;
 		    _logger = loggerfactory.CreateLogger(nameof(StoreController));
+		    _appSettings = appSettingsOptions.Value;
 		}
 
         /// <summary>
@@ -77,10 +81,10 @@ namespace SSW.MusicStore.API.Controllers
 		/// <returns>Order object </returns>
 		[Authorize(ActiveAuthenticationSchemes = "Bearer")]
 		[HttpGet("order/all")]
-		public IActionResult GetOrders()
+		public async Task<IActionResult> GetOrders()
 		{
 			// Add it to the order
-			var viewModel =  _cartQueryService.GetOrders(GetCartId());
+			var viewModel = await _cartQueryService.GetOrders(GetCartId());
 
 			// Return the order json
 			return Json(viewModel);
@@ -110,8 +114,8 @@ namespace SSW.MusicStore.API.Controllers
 				Total = 0
 			};
 
-			// Add it to the order
-			var viewModel = await _cartCommandService.CreateOrderFromCart(GetCartId(), addedOrder);
+		    // Add it to the order
+			var viewModel = await _cartCommandService.CreateOrderFromCart(GetCartId(), addedOrder, order.StripeToken, _appSettings.Stripe.SecretKey);
 
 			// Return the order json
 			return Json(viewModel);

@@ -20,6 +20,14 @@ namespace SSW.MusicStore.Data.Repositories
         }
     }
 
+    public class CartRepository : BaseRepository<Cart, MusicStoreContext>
+    {
+        public CartRepository(IAmbientDbContextLocator dbContextScopeLocator)
+            : base(dbContextScopeLocator)
+        {
+        }
+    }
+
     public class CartItemRepository : BaseRepository<CartItem, MusicStoreContext>
     {
         public CartItemRepository(IAmbientDbContextLocator dbContextScopeLocator)

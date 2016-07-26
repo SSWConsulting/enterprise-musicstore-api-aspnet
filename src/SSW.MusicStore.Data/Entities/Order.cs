@@ -57,6 +57,8 @@ namespace SSW.MusicStore.Data.Entities
 
         public decimal Total { get; set; }
 
+        public string TransactionId { get; set; }
+
         public virtual ICollection<OrderDetail> OrderDetails { get; set; }
     }
 }
