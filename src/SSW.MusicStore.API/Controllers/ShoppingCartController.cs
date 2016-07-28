@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using System;
 
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.OptionsModel;
+using Microsoft.Extensions.Options;
 using SSW.MusicStore.API.Helpers;
 using SSW.MusicStore.API.Settings;
 using SSW.MusicStore.BusinessLogic.Interfaces.Command;
@@ -109,7 +109,7 @@ namespace SSW.MusicStore.API.Controllers
 				OrderDate = DateTime.Today,
 				Phone = order.Phone,
 				PostalCode = order.PostalCode,
-				State = order.State,
+				State = order.State ?? "NA",
 				Username = GetCartId(),
 				Total = 0
 			};
