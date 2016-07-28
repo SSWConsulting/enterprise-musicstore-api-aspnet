@@ -31,13 +31,13 @@ namespace SSW.MusicStore.API
             if (env.IsDevelopment())
             {
                 builder.AddJsonFile("appsettings.json").AddJsonFile("privatesettings.json", optional: true);
+                builder.AddUserSecrets();
             }
             else
             {
                 builder.AddJsonFile("appsettings.json", optional: true);
             }
 
-            builder.AddUserSecrets();
             builder.AddEnvironmentVariables();
 
             this.Configuration = builder.Build();

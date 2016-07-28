@@ -24,7 +24,7 @@ namespace SSW.MusicStore.Data.Migrations
                 name: "Cart",
                 columns: table => new
                 {
-                    CartId = table.Column<string>(nullable: false)
+                    CartId = table.Column<string>(maxLength: 450, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -122,7 +122,7 @@ namespace SSW.MusicStore.Data.Migrations
                     CartItemId = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     AlbumId = table.Column<int>(nullable: false),
-                    CartId = table.Column<string>(nullable: false),
+                    CartId = table.Column<string>(maxLength: 450, nullable: false),
                     Count = table.Column<int>(nullable: false),
                     DateCreated = table.Column<DateTime>(nullable: false)
                 },
