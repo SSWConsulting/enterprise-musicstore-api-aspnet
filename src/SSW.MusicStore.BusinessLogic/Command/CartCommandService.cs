@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Autofac.Features.OwnedInstances;
-using Microsoft.Data.Entity;
+using Microsoft.EntityFrameworkCore;
 using SSW.DataOnion.Interfaces;
 using SSW.MusicStore.BusinessLogic.Interfaces.Command;
 using SSW.MusicStore.Data.Entities;
@@ -161,7 +161,7 @@ namespace SSW.MusicStore.BusinessLogic.Command
                 {
                     var message = $"Cart item with id {cartItemId} could not be found.";
                     Serilog.Log.Logger.Error(message);
-                    throw new ApplicationException(message);
+                    throw new Exception(message);
                 }
 
                 var itemCount = 0;

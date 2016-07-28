@@ -3,7 +3,7 @@
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://localhost:2739/",
+      "applicationUrl": "http://localhost:2749/",
       "sslPort": 44343
     }
   },
@@ -20,6 +20,7 @@
       "environmentVariables": {
         "Hosting:Environment": "Development"
       }
-    }
+    },
+    "newProfile1": {}
   }
 }
