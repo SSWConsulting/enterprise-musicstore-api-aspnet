@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.AspNet.Mvc;
+using Microsoft.AspNetCore.Mvc;
 
 using System.Linq;
-using Microsoft.AspNet.Authorization;
-using Mindscape.Raygun4Net;
-using Mindscape.Raygun4Net.AspNetCore;
+using Microsoft.AspNetCore.Authorization;
 using Serilog;
 using SSW.MusicStore.BusinessLogic.Interfaces.Query;
 using SSW.MusicStore.Data.Entities;
@@ -34,7 +31,7 @@ namespace SSW.MusicStore.API.Controllers
             var results = await _genreQueryService.GetAllGenres();
             if (results == null || !results.Any())
             {
-                return HttpNotFound();
+                return this.NotFound();
             }
 
             return Json(results);
@@ -46,7 +43,7 @@ namespace SSW.MusicStore.API.Controllers
             var results = await _albumQueryService.GetByGenre(genre);
             if (!results.Any())
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             return Json(results);
@@ -60,7 +57,7 @@ namespace SSW.MusicStore.API.Controllers
             if (album != null) return new JsonResult(album);
 
             Log.Logger.Warning("User tried to retrieve album with {id} which doesn't exist", id);
-            return HttpNotFound();
+            return NotFound();
         }
 
         [HttpGet("popular")]

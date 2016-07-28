@@ -1,5 +1,6 @@
-﻿using Microsoft.Data.Entity;
-using Microsoft.Data.Entity.Infrastructure;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Configuration;
 using SSW.MusicStore.Data.Entities;
 
@@ -65,10 +66,12 @@ namespace SSW.MusicStore.Data
             builder.Entity<Album>().Ignore(a => a.OrderDetails);
             builder.Entity<OrderDetail>().Ignore(od => od.Album);
 
-			base.OnModelCreating(builder);
+            foreach (var entity in builder.Model.GetEntityTypes())
+            {
+                entity.Relational().TableName = entity.DisplayName();
+            }
+
+            base.OnModelCreating(builder);
         }
-
-
-	    
     }
 }
