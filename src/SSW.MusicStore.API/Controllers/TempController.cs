@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using SSW.MusicStore.Data;
 using Microsoft.EntityFrameworkCore;
 using SSW.DataOnion.Interfaces;
@@ -11,7 +7,7 @@ using SSW.DataOnion.Interfaces;
 
 namespace SSW.MusicStore.API.Controllers
 {
-    [Route("[controller]")]
+    //[Route("[controller]")]
     public class TempController : Controller
     {
         private readonly IDbContextScopeFactory _factory;
@@ -21,7 +17,7 @@ namespace SSW.MusicStore.API.Controllers
             _factory = factory;
         }
 
-        [Route("updatedb")]
+        //[Route("updatedb")]
         public IActionResult updatedb()
         {
             using (var db = _factory.Create())
