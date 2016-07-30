@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Serialization;
 using Serilog;
 using System.Threading.Tasks;
+using Mindscape.Raygun4Net;
 
 using Autofac;
 using SerilogWeb.Classic.Enrichers;
@@ -66,8 +67,7 @@ namespace SSW.MusicStore.API
                         options.Filters.Add(new MvcValidateModelActionFilter());
                     });
 
-            //TODO: update this once Raygun supports ASPNET CORE RTM
-            //services.AddRaygun(this.Configuration);
+            services.AddRaygun(this.Configuration);
 
             services.AddApplicationInsightsTelemetry(this.Configuration);
 
@@ -162,8 +162,7 @@ namespace SSW.MusicStore.API
             app.UseSwaggerUi();
             app.UseSwagger();
 
-            //TODO: update this once Raygun supports ASPNET CORE RTM
-            //app.UseRaygun();
+            app.UseRaygun();
 
             app.UseApplicationInsightsRequestTelemetry();
             app.UseApplicationInsightsExceptionTelemetry();
