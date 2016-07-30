@@ -29,7 +29,7 @@ namespace SSW.MusicStore.API.Infrastructure.DI
                 .AsImplementedInterfaces();
 
             var databaseInitializer = new MigrateToLatestVersion(new SampleDataSeeder());
-            builder.AddDataOnion(new DbContextConfig(configuration["Data:DefaultConnection:ConnectionString"], typeof(MusicStoreContext), databaseInitializer));
+            builder.AddDataOnion(new DbContextConfig(configuration.GetConnectionString("DefaultConnection"), typeof(MusicStoreContext), databaseInitializer));
 
             // Populate the container with services that were previously registered
             builder.Populate(services);
