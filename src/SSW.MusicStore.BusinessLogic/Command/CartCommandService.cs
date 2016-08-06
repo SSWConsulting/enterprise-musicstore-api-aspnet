@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Autofac.Features.OwnedInstances;
@@ -115,7 +116,16 @@ namespace SSW.MusicStore.BusinessLogic.Command
             Serilog.Log.Logger.Debug($"{nameof(this.AddToCart)} album '{album.Title}' for cart with id '{cartId}'");
             using (var unitOfWork = this.unitOfWorkFunc())
             {
+                var cartRepository = unitOfWork.Value.Repository<Cart>();
                 var cartItemsRepository = unitOfWork.Value.Repository<CartItem>();
+
+                // check if cart exists and create one if it doesn't
+                var existingCart = await cartRepository.Get().SingleOrDefaultAsync(c => c.CartId == cartId, cancellationToken);
+                if (existingCart == null)
+                {
+                    existingCart = new Cart {CartId = cartId, CartItems = new List<CartItem>()};
+                    cartRepository.Add(existingCart);
+                }
 
                 // Get the matching cart and album instances
                 var cartItem =
@@ -136,6 +146,7 @@ namespace SSW.MusicStore.BusinessLogic.Command
                     };
 
                     cartItemsRepository.Add(cartItem);
+                    existingCart.CartItems.Add(cartItem);
                 }
                 else
                 {

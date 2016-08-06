@@ -55,6 +55,21 @@ namespace SSW.MusicStore.API.Controllers
         }
 
         /// <summary>
+        /// Gets the current shopping cart for logged in user.
+        /// </summary>
+        /// <returns>Cart object including shopping cart items and totals</returns>
+        [Authorize(ActiveAuthenticationSchemes = "Bearer")]
+        [HttpGet("cart/items")]
+        public async Task<IActionResult> GetCartItems()
+        {
+            // Get current cart for the logged in user
+            var viewModel = await GetCart();
+            
+            // Return the cart json
+            return Json(viewModel.CartItems);
+        }
+
+        /// <summary>
         /// Adds album to cart.
         /// </summary>
         /// <param name="id">The identifier.</param>
@@ -177,8 +192,8 @@ namespace SSW.MusicStore.API.Controllers
         }
 
 		private string GetCartId()
-        {
-            var userId = this.User.Claims.GetNameIdentifier();
+		{
+		    var userId = this.User.Claims.GetNameIdentifier();
             if (userId.IsNullOrEmpty())
             {
                 var message = "Could not find name identifier in user claims";
