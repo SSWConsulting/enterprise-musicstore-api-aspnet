@@ -136,6 +136,7 @@ namespace SSW.MusicStore.API
 
             app.UseStaticFiles();
 
+            // required for decryption
             var keyAsBase64 = Configuration["Auth0:ClientSecret"].Replace('_', '/').Replace('-', '+');
             var keyAsBytes = Convert.FromBase64String(keyAsBase64);
 
