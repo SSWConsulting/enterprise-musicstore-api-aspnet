@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using Mindscape.Raygun4Net;
 
 using Autofac;
+using Microsoft.IdentityModel.Tokens;
 using SerilogWeb.Classic.Enrichers;
 using SSW.MusicStore.API.Filters;
 using SSW.MusicStore.API.Infrastructure.DI;
@@ -103,7 +104,7 @@ namespace SSW.MusicStore.API
                     .Enrich.WithProperty("ApplicationName", "Music Store")
                     .Enrich.With(new HttpRequestIdEnricher());
             Log.Logger = config.CreateLogger();
-            
+
             loggerFactory.AddSerilog();
             loggerFactory.AddDebug();
 
@@ -135,6 +136,9 @@ namespace SSW.MusicStore.API
 
             app.UseStaticFiles();
 
+            var keyAsBase64 = Configuration["Auth0:ClientSecret"].Replace('_', '/').Replace('-', '+');
+            var keyAsBytes = Convert.FromBase64String(keyAsBase64);
+
             var jwtOptions = new JwtBearerOptions
             {
                 Audience = Configuration["Auth0:ClientId"],
@@ -146,6 +150,10 @@ namespace SSW.MusicStore.API
                         Log.Logger.Error("Authentication failed.", context.Exception);
                         return Task.FromResult(0);
                     }
+                },
+                TokenValidationParameters =
+                {
+                    IssuerSigningKey = new SymmetricSecurityKey(keyAsBytes)
                 }
             };
             app.UseJwtBearerAuthentication(jwtOptions);
