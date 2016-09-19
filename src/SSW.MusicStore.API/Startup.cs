@@ -19,6 +19,7 @@ using SSW.MusicStore.API.Infrastructure.DI;
 using SSW.MusicStore.API.Settings;
 using SSW.MusicStore.API.Infrastructure.Filters;
 using Swashbuckle.Swagger.Model;
+//deploy again
 
 namespace SSW.MusicStore.API
 {
