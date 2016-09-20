@@ -1,0 +1,17 @@
+{
+  "name": "ssw.musicstore.api",
+  "homepage": "https://github.com/SSWConsulting/enterprise-musicstore-api-aspnet",
+  "authors": [
+    "Jason Taylor <jasontaylor@ssw.com.au>"
+  ],
+  "description": "",
+  "main": "",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
