@@ -7,7 +7,7 @@
     "Microsoft.AspNetCore.Identity.EntityFrameworkCore": "1.0.0",
     "Microsoft.EntityFrameworkCore.Relational": "1.0.0",
     "Microsoft.Extensions.Configuration.Json": "1.0.0",
-    "SSW.DataOnion.Core": "1.0.0",
+    "SSW.DataOnion.Interfaces": "1.0.0",
     "Serilog": "2.0.0"
   },
 
