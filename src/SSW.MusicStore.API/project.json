@@ -28,7 +28,7 @@
     "Microsoft.Extensions.Configuration.UserSecrets": "1.0.0",
     "Microsoft.EntityFrameworkCore.SqlServer": "1.0.0",
     "SSW.MusicStore.Data": "1.0.0-*",
-    "SSW.DataOnion.DependencyResolution.Autofac": "1.0.0",
+    "SSW.DataOnion.Interfaces": "1.0.0",
     "Swashbuckle": "6.0.0-beta901",
     "SSW.MusicStore.BusinessLogic.Interfaces": "1.0.0-*",
     "SSW.MusicStore.BusinessLogic": "1.0.0-*",
